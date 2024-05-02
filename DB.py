@@ -66,7 +66,6 @@ class DB:
             id INTEGER PRIMARY KEY
         );
 
-        INSERT OR IGNORE INTO admins(id) VALUES({int(os.getenv('OWNER_ID'))});
         """
         cr.executescript(script)
 

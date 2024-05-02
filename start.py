@@ -36,6 +36,9 @@ async def inits(app: Application):
     await bot.set_my_commands(
         commands=[BotCommand(command="start", description="home page")]
     )
+    await DB.add_new_admin(
+        user_id=int(os.getenv("OWNER_ID"))
+    )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE:
