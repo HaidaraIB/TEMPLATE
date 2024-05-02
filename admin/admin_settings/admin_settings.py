@@ -11,12 +11,10 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from telegram.constants import (
-    ParseMode,
-)
 
 from common import (
     build_admin_keyboard,
+    back_to_admin_home_page_button,
     back_to_admin_home_page_handler,
 )
 
@@ -31,16 +29,6 @@ NEW_ADMIN_ID = 40
 CHOOSE_ADMIN_ID_TO_REMOVE = 41
 
 
-back_button = [
-    [
-        InlineKeyboardButton(
-            text="العودة إلى القائمة الرئيسية🔙",
-            callback_data="back to admin home page",
-        )
-    ],
-]
-
-
 async def admin_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
         admin_settings_keyboard = [
@@ -53,7 +41,7 @@ async def admin_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     text="عرض آيديات الآدمنز الحاليين🆔", callback_data="show admins"
                 )
             ],
-            back_button[0],
+            back_to_admin_home_page_button[0],
         ]
         await update.callback_query.edit_message_text(
             text="إعدادات الآدمن🪄",
@@ -151,7 +139,7 @@ async def back_to_admin_settings(update: Update, context: ContextTypes.DEFAULT_T
                     text="عرض آيديات الآدمنز الحاليين🆔", callback_data="show admins"
                 )
             ],
-            back_button[0],
+            back_to_admin_home_page_button[0],
         ]
         await update.callback_query.edit_message_text(
             text="هل تريد:", reply_markup=InlineKeyboardMarkup(admin_settings_keyboard)
@@ -170,7 +158,7 @@ async def show_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text += "\nاختر ماذا تريد أن تفعل:"
     keyboard = build_admin_keyboard()
     await update.callback_query.edit_message_text(
-        text=text, reply_markup=keyboard, parse_mode=ParseMode.HTML
+        text=text, reply_markup=keyboard,
     )
 
 

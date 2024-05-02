@@ -10,9 +10,6 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from telegram.constants import (
-    ParseMode,
-)
 
 from common import (
     build_admin_keyboard,
@@ -33,12 +30,10 @@ async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if update.effective_message.user_shared:
             await update.message.reply_text(
                 text=f"🆔: <code>{update.effective_message.user_shared.user_id}</code>",
-                parse_mode=ParseMode.HTML,
             )
         else:
             await update.message.reply_text(
                 text=f"🆔: <code>{update.effective_message.chat_shared.chat_id}</code>",
-                parse_mode=ParseMode.HTML,
             )
 
 async def hide_ids_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):

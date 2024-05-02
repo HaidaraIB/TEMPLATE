@@ -16,7 +16,6 @@ from telegram.ext import (
 )
 
 from telegram.constants import (
-    ParseMode,
     ChatMemberStatus,
 )
 
@@ -36,9 +35,8 @@ async def inits(app: Application):
     await bot.set_my_commands(
         commands=[BotCommand(command="start", description="home page")]
     )
-    await DB.add_new_admin(
-        user_id=int(os.getenv("OWNER_ID"))
-    )
+    await DB.add_new_admin(user_id=int(os.getenv("OWNER_ID")))
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE:
@@ -82,7 +80,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             keyboard = build_user_keyboard()
 
         await update.message.reply_text(
-            text=text, parse_mode=ParseMode.HTML, reply_markup=keyboard
+            text=text,
+            reply_markup=keyboard,
         )
         return ConversationHandler.END
 
@@ -100,7 +99,7 @@ async def check_joined(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = "أهلاً بك..."
     keyboard = build_user_keyboard(worker=context.user_data["is_worker"])
     await update.callback_query.edit_message_text(
-        text=text, parse_mode=ParseMode.HTML, reply_markup=keyboard
+        text=text,
     )
 
 

@@ -101,7 +101,7 @@ def callback_button_uuid_generator():
     return uuid.uuid4().hex
 
 
-back_to_admin_hom_epage_button = [
+back_to_admin_home_page_button = [
     [
         InlineKeyboardButton(
             text="العودة إلى القائمة الرئيسية🔙",
