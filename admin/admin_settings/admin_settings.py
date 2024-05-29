@@ -24,10 +24,7 @@ import os
 from DB import DB
 from custom_filters.Admin import Admin
 
-NEW_ADMIN_ID = 40
-
-CHOOSE_ADMIN_ID_TO_REMOVE = 41
-
+(NEW_ADMIN_ID, CHOOSE_ADMIN_ID_TO_REMOVE) = range(2)
 
 async def admin_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
@@ -158,23 +155,22 @@ async def show_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text += "\nاختر ماذا تريد أن تفعل:"
     keyboard = build_admin_keyboard()
     await update.callback_query.edit_message_text(
-        text=text, reply_markup=keyboard,
+        text=text,
+        reply_markup=keyboard,
     )
 
 
 admin_settings_handler = CallbackQueryHandler(admin_settings, "^admin settings$")
 
-show_admins_handler = CallbackQueryHandler(callback=show_admins, pattern="^show admins$")
+show_admins_handler = CallbackQueryHandler(
+    callback=show_admins, pattern="^show admins$"
+)
 
 add_admin_handler = ConversationHandler(
-    entry_points=[
-        CallbackQueryHandler(callback=add_admin, pattern="^add admin$")
-    ],
+    entry_points=[CallbackQueryHandler(callback=add_admin, pattern="^add admin$")],
     states={
         NEW_ADMIN_ID: [
-            MessageHandler(
-                filters=filters.Regex("^\d+$"), callback=new_admin_id
-            )
+            MessageHandler(filters=filters.Regex("^\d+$"), callback=new_admin_id)
         ]
     },
     fallbacks=[
