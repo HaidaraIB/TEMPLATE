@@ -33,6 +33,7 @@ from user.user_calls import *
 from admin.admin_calls import *
 from admin.admin_settings import *
 from admin.broadcast import *
+from admin.ban import *
 
 import os
 from DB import DB
@@ -68,6 +69,8 @@ def main():
     app.add_handler(broadcast_message_handler)
 
     app.add_handler(check_joined_handler)
+
+    app.add_handler(ban_unban_user_handler)
 
     app.add_handler(start_command)
     app.add_handler(find_id_handler)

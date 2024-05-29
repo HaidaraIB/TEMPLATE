@@ -94,6 +94,12 @@ def build_admin_keyboard():
         ],
         [
             InlineKeyboardButton(
+                text="حظر/فك حظر 🔓🔒",
+                callback_data="ban unban",
+            )
+        ],
+        [
+            InlineKeyboardButton(
                 text="إخفاء/إظهار كيبورد معرفة الآيديات🪄",
                 callback_data="hide ids keyboard",
             )
@@ -186,6 +192,7 @@ request_buttons = [
 
 def create_folders():
     os.makedirs("data", exist_ok=True)
+
 
 async def invalid_callback_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == ChatType.PRIVATE:
