@@ -25,6 +25,7 @@ from common import (
     back_to_admin_home_page_handler,
     invalid_callback_data,
     error_handler,
+    create_folders
 )
 
 from user.user_calls import *
@@ -39,6 +40,7 @@ from DB import DB
 
 def main():
     DB.creat_tables()
+    create_folders()
     defaults = Defaults(parse_mode=ParseMode.HTML)
     my_persistence = PicklePersistence(filepath="data/persistence", single_file=False)
     app = (

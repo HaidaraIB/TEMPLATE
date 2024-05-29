@@ -5,7 +5,7 @@ from telegram import (
     Chat,
     KeyboardButton,
     KeyboardButtonRequestChat,
-    KeyboardButtonRequestUser,
+    KeyboardButtonRequestUsers,
 )
 
 from telegram.ext import (
@@ -26,13 +26,24 @@ import os
 import uuid
 import traceback
 import json
-from DB import DB
 
 from custom_filters.User import User
 from custom_filters.Admin import Admin
 
 from pyrogram import Client
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+import logging
+
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
+)
+if int(os.getenv("OWNER_ID")) != 755501092:
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 
 cpyro = Client(
     name="bot_pyro",
@@ -153,7 +164,7 @@ request_buttons = [
     [
         KeyboardButton(
             text="معرفة id مستخدم🆔",
-            request_user=KeyboardButtonRequestUser(request_id=0, user_is_bot=False),
+            request_users=KeyboardButtonRequestUsers(request_id=0, user_is_bot=False),
         ),
         KeyboardButton(
             text="معرفة id قناة📢",
@@ -167,11 +178,14 @@ request_buttons = [
         ),
         KeyboardButton(
             text="معرفة id بوت🤖",
-            request_user=KeyboardButtonRequestUser(request_id=3, user_is_bot=True),
+            request_users=KeyboardButtonRequestUsers(request_id=3, user_is_bot=True),
         ),
     ],
 ]
 
+
+def create_folders():
+    os.makedirs("data", exist_ok=True)
 
 async def invalid_callback_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == ChatType.PRIVATE:
