@@ -115,7 +115,7 @@ def build_admin_keyboard():
 
 
 def build_back_button(data:str):
-    return InlineKeyboardButton(text="الرجوع🔙", callback_data=data)
+    return [InlineKeyboardButton(text="الرجوع🔙", callback_data=data)]
 
 def callback_button_uuid_generator():
     return uuid.uuid4().hex
