@@ -97,9 +97,9 @@ async def check_joined(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     text = "أهلاً بك..."
-    keyboard = build_user_keyboard(worker=context.user_data["is_worker"])
     await update.callback_query.edit_message_text(
         text=text,
+        reply_markup=build_user_keyboard(),
     )
 
 
