@@ -27,9 +27,9 @@ from custom_filters.Admin import Admin
 
 async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        if update.effective_message.user_shared:
+        if update.effective_message.users_shared:
             await update.message.reply_text(
-                text=f"🆔: <code>{update.effective_message.user_shared.user_id}</code>",
+                text=f"🆔: <code>{update.effective_message.users_shared.users[0].user_id}</code>",
             )
         else:
             await update.message.reply_text(
@@ -72,6 +72,6 @@ async def hide_ids_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 hide_ids_keyboard_handler = CallbackQueryHandler(callback=hide_ids_keyboard, pattern="^hide ids keyboard$")
 
 find_id_handler = MessageHandler(
-    filters=filters.StatusUpdate.USER_SHARED | filters.StatusUpdate.CHAT_SHARED,
+    filters=filters.StatusUpdate.USERS_SHARED | filters.StatusUpdate.CHAT_SHARED,
     callback=find_id,
 )
