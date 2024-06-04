@@ -1,3 +1,5 @@
 data/*
 .env
 __pycache__/
+session.session
+test.py
