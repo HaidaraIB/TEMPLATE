@@ -16,17 +16,21 @@ from telegram.constants import (
 
 from start import (
     start_command,
-    check_joined_handler,
     inits,
 )
 
-from common import (
-    back_to_user_home_page_handler,
-    back_to_admin_home_page_handler,
+from common.common import (
     invalid_callback_data,
     error_handler,
     create_folders
 )
+
+from common.back_to_home_page import (
+    back_to_admin_home_page_handler,
+    back_to_user_home_page_handler
+)
+
+from common.force_join import check_joined_handler
 
 from user.user_calls import *
 
@@ -48,7 +52,7 @@ def main():
         Application.builder()
         .token(os.getenv("BOT_TOKEN"))
         .post_init(inits)
-        .arbitrary_callback_data(True)
+        # .arbitrary_callback_data(True)
         .persistence(persistence=my_persistence)
         .defaults(defaults)
         .concurrent_updates(True)

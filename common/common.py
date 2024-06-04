@@ -2,7 +2,6 @@ from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    Chat,
     KeyboardButton,
     KeyboardButtonRequestChat,
     KeyboardButtonRequestUsers,
@@ -10,13 +9,10 @@ from telegram import (
 
 from telegram.ext import (
     ContextTypes,
-    CallbackQueryHandler,
-    ConversationHandler,
 )
 
 
 from telegram.constants import (
-    ChatMemberStatus,
     ChatType,
 )
 
@@ -26,9 +22,6 @@ import os
 import uuid
 import traceback
 import json
-
-from custom_filters.User import User
-from custom_filters.Admin import Admin
 
 from pyrogram import Client
 
@@ -53,34 +46,15 @@ cpyro = Client(
 )
 
 
-async def check_if_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_member = await context.bot.get_chat_member(
-        chat_id=int(os.getenv("CHANNEL_ID")), user_id=update.effective_user.id
-    )
-    if chat_member.status == ChatMemberStatus.LEFT:
-        text = f"""لبدء استخدام البوت  يجب عليك الانضمام الى قناة البوت أولاً.
-        
-✅ اشترك أولاً 👇.
-🔗 {os.getenv("CHANNEL_LINK")}
-
-ثم اضغط تحقق✅"""
-        check_joined_button = [
-            [InlineKeyboardButton(text="تحقق✅", callback_data="check joined")]
-        ]
-        if update.callback_query:
-            await update.callback_query.edit_message_text(
-                text=text, reply_markup=InlineKeyboardMarkup(check_joined_button)
-            )
-        else:
-            await update.message.reply_text(
-                text=text, reply_markup=InlineKeyboardMarkup(check_joined_button)
-            )
-        return False
-    return True
-
-
 def build_user_keyboard():
-    keyboard = []
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                text="العودة إلى القائمة الرئيسية🔙",
+                callback_data="back to user home page",
+            )
+        ],
+    ]
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -114,59 +88,12 @@ def build_admin_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 
-def build_back_button(data:str):
+def build_back_button(data: str):
     return [InlineKeyboardButton(text="الرجوع🔙", callback_data=data)]
+
 
 def callback_button_uuid_generator():
     return uuid.uuid4().hex
-
-
-back_to_admin_home_page_button = [
-    [
-        InlineKeyboardButton(
-            text="العودة إلى القائمة الرئيسية🔙",
-            callback_data="back to admin home page",
-        )
-    ],
-]
-
-back_to_user_hom_epage_button = [
-    [
-        InlineKeyboardButton(
-            text="العودة إلى القائمة الرئيسية🔙",
-            callback_data="back to user home page",
-        )
-    ],
-]
-
-
-async def back_to_user_home_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == Chat.PRIVATE and User().filter(update):
-        is_user_member = await check_if_user_member(update=update, context=context)
-
-        if not is_user_member:
-            return
-
-        text = "القائمة الرئيسية🔝"
-        keyboard = build_user_keyboard()
-        await update.callback_query.edit_message_text(text=text, reply_markup=keyboard)
-        return ConversationHandler.END
-
-
-async def back_to_admin_home_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        await update.callback_query.edit_message_text(
-            text="القائمة الرئيسية🔝", reply_markup=build_admin_keyboard()
-        )
-        return ConversationHandler.END
-
-
-back_to_user_home_page_handler = CallbackQueryHandler(
-    back_to_user_home_page, "^back to user home page$"
-)
-back_to_admin_home_page_handler = CallbackQueryHandler(
-    back_to_admin_home_page, "^back to admin home page$"
-)
 
 
 request_buttons = [

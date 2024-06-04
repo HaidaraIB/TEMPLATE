@@ -12,20 +12,17 @@ from telegram.ext import (
     ContextTypes,
     Application,
     ConversationHandler,
-    CallbackQueryHandler,
 )
 
-from telegram.constants import (
-    ChatMemberStatus,
-)
 
 import os
 from DB import DB
 
-from common import (
+from common.force_join import check_if_user_member
+
+from common.common import (
     build_user_keyboard,
     build_admin_keyboard,
-    check_if_user_member,
     request_buttons,
 )
 
@@ -85,26 +82,5 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return ConversationHandler.END
 
-
-async def check_joined(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_memeber = await context.bot.get_chat_member(
-        chat_id=int(os.getenv("CHANNEL_ID")), user_id=update.effective_user.id
-    )
-    if chat_memeber.status == ChatMemberStatus.LEFT:
-        await update.callback_query.answer(
-            text="قم بالاشتراك بالقناة أولاً", show_alert=True
-        )
-        return
-
-    text = "أهلاً بك..."
-    await update.callback_query.edit_message_text(
-        text=text,
-        reply_markup=build_user_keyboard(),
-    )
-
-
 start_command = CommandHandler(command="start", callback=start)
 
-check_joined_handler = CallbackQueryHandler(
-    callback=check_joined, pattern="^check joined$"
-)

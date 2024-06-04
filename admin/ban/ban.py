@@ -17,10 +17,13 @@ from custom_filters import *
 
 from DB import DB
 
-from common import (
+from common.common import (
     build_admin_keyboard,
-    back_to_admin_home_page_handler,
+)
+
+from common.back_to_home_page import (
     back_to_admin_home_page_button,
+    back_to_admin_home_page_handler,
 )
 
 from start import start_command

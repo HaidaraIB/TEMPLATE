@@ -12,8 +12,11 @@ from telegram.ext import (
     filters,
 )
 
-from common import (
+from common.common import (
     build_admin_keyboard,
+)
+
+from common.back_to_home_page import (
     back_to_admin_home_page_button,
     back_to_admin_home_page_handler,
 )
@@ -25,6 +28,7 @@ from DB import DB
 from custom_filters.Admin import Admin
 
 (NEW_ADMIN_ID, CHOOSE_ADMIN_ID_TO_REMOVE) = range(2)
+
 
 async def admin_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):

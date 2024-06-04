@@ -12,10 +12,13 @@ from telegram.ext import (
     filters,
 )
 
-from common import (
+from common.common import (
     build_admin_keyboard,
-    back_to_admin_home_page_button,
+)
+
+from common.back_to_home_page import (
     back_to_admin_home_page_handler,
+    back_to_admin_home_page_button,
 )
 
 from start import start_command
