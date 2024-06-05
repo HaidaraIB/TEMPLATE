@@ -47,14 +47,7 @@ cpyro = Client(
 
 
 def build_user_keyboard():
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                text="العودة إلى القائمة الرئيسية🔙",
-                callback_data="back to user home page",
-            )
-        ],
-    ]
+    keyboard = []
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -92,7 +85,7 @@ def build_back_button(data: str):
     return [InlineKeyboardButton(text="الرجوع🔙", callback_data=data)]
 
 
-def callback_button_uuid_generator():
+def uuid_generator():
     return uuid.uuid4().hex
 
 

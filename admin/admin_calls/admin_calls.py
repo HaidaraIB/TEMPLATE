@@ -15,15 +15,8 @@ from common.common import (
     build_admin_keyboard,
     request_buttons,
 )
+
 from custom_filters.Admin import Admin
-
-
-(
-    NEW_USDT_TO_SYP,
-    PAYMENT_METHOD_TO_TURN_ON_OR_OFF,
-    USER_CALL_TO_TURN_ON_OR_OFF,
-) = range(3)
-
 
 async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):

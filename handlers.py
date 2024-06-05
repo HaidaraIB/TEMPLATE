@@ -4,19 +4,11 @@ from telegram import (
 
 from telegram.ext import (
     CallbackQueryHandler,
-    Application,
-    PicklePersistence,
     InvalidCallbackData,
-    Defaults,
-)
-
-from telegram.constants import (
-    ParseMode,
 )
 
 from start import (
     start_command,
-    inits,
 )
 
 from common.common import (
@@ -39,26 +31,15 @@ from admin.admin_settings import *
 from admin.broadcast import *
 from admin.ban import *
 
-import os
-
 from DB import DB
 
+from MyApp import MyApp
 
 def main():
     DB.creat_tables()
     create_folders()
-    defaults = Defaults(parse_mode=ParseMode.HTML)
-    my_persistence = PicklePersistence(filepath="data/persistence", single_file=False)
-    app = (
-        Application.builder()
-        .token(os.getenv("BOT_TOKEN"))
-        .post_init(inits)
-        # .arbitrary_callback_data(True)
-        .persistence(persistence=my_persistence)
-        .defaults(defaults)
-        .concurrent_updates(True)
-        .build()
-    )
+    
+    app = MyApp().build_app()
 
     app.add_handler(
         CallbackQueryHandler(
