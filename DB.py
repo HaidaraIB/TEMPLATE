@@ -58,7 +58,7 @@ class DB:
 
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY,
-            username TEXT UNIQUE,
+            username TEXT,
             name TEXT
         );
 
