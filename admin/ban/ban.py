@@ -17,21 +17,20 @@ from custom_filters import *
 
 from DB import DB
 
-from common.common import (
-    build_admin_keyboard,
-)
+from common.common import build_admin_keyboard, build_back_button
 
 from common.back_to_home_page import (
     back_to_admin_home_page_button,
     back_to_admin_home_page_handler,
 )
 
-from start import start_command
+from start import admin_command
 
 (
     USER_ID_TO_BAN_UNBAN,
     BAN_UNBAN_USER,
 ) = range(2)
+
 
 async def ban_unban(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
@@ -52,7 +51,7 @@ async def user_id_to_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYP
         if not user:
             await update.message.reply_text(
                 text="لم يتم العثور على المستخدم، تأكد من الآيدي وأعد إرساله. ❌",
-                reply_markup=InlineKeyboardMarkup(back_to_admin_home_page_button)
+                reply_markup=InlineKeyboardMarkup(back_to_admin_home_page_button),
             )
             return
         if user["banned"]:
@@ -67,11 +66,7 @@ async def user_id_to_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYP
             ]
         keyboard = [
             ban_button,
-            [
-                InlineKeyboardButton(
-                    text="الرجوع🔙", callback_data="back to user id to ban unban"
-                )
-            ],
+            build_back_button("back to user id to ban unban"),
             back_to_admin_home_page_button[0],
         ]
         await update.message.reply_text(
@@ -97,6 +92,7 @@ async def ban_unban_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return ConversationHandler.END
 
+
 ban_unban_user_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
@@ -111,13 +107,19 @@ ban_unban_user_handler = ConversationHandler(
                 callback=user_id_to_ban_unban,
             )
         ],
-        BAN_UNBAN_USER: [CallbackQueryHandler(ban_unban_user, "^ban \d+$|^unban \d+$")],
+        BAN_UNBAN_USER: [
+            CallbackQueryHandler(
+                ban_unban_user,
+                "^ban \d+$|^unban \d+$",
+            ),
+        ],
     },
     fallbacks=[
-        start_command,
-        back_to_admin_home_page_handler,
         CallbackQueryHandler(
-            back_to_user_id_to_ban_unban, "^back to user id to ban unban$"
+            back_to_user_id_to_ban_unban,
+            "^back to user id to ban unban$",
         ),
+        admin_command,
+        back_to_admin_home_page_handler,
     ],
 )

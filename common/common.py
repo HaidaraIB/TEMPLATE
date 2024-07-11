@@ -23,8 +23,6 @@ import uuid
 import traceback
 import json
 
-from pyrogram import Client
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -37,14 +35,6 @@ logging.basicConfig(
 )
 if int(os.getenv("OWNER_ID")) != 755501092:
     logging.getLogger("httpx").setLevel(logging.WARNING)
-
-cpyro = Client(
-    name="bot_pyro",
-    api_id=int(os.getenv("API_ID")),
-    api_hash=os.getenv("API_HASH"),
-    bot_token=os.getenv("BOT_TOKEN"),
-)
-
 
 def build_user_keyboard():
     keyboard = []

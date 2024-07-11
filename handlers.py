@@ -9,6 +9,7 @@ from telegram.ext import (
 
 from start import (
     start_command,
+    admin_command
 )
 
 from common.common import (
@@ -58,6 +59,7 @@ def main():
 
     app.add_handler(ban_unban_user_handler)
 
+    app.add_handler(admin_command)
     app.add_handler(start_command)
     app.add_handler(find_id_handler)
     app.add_handler(hide_ids_keyboard_handler)

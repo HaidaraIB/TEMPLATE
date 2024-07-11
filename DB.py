@@ -1,6 +1,8 @@
 import sqlite3
 import os
 import re
+import traceback
+
 from asyncio import Lock
 
 lock = Lock()
@@ -21,6 +23,8 @@ def lock_and_release(func):
                 return result
         except sqlite3.Error as e:
             print(e)
+            with open("errors.txt", "a", encoding="utf-8") as f:
+                f.write(f"{traceback.format_exc()}\n{'-'*100}\n\n\n")
         finally:
             cr.close()
             db.close()
@@ -59,7 +63,8 @@ class DB:
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY,
             username TEXT,
-            name TEXT
+            name TEXT,
+            banned INTEGER
         );
 
         CREATE TABLE IF NOT EXISTS admins (
@@ -76,7 +81,10 @@ class DB:
     @staticmethod
     @connect_and_close
     def check_admin(user_id: int, cr: sqlite3.Cursor = None):
-        cr.execute("SELECT * FROM admins WHERE id=?", (user_id,))
+        cr.execute(
+            "SELECT * FROM admins WHERE id=?",
+            (user_id,),
+        )
         return cr.fetchone()
 
     @staticmethod
@@ -88,29 +96,43 @@ class DB:
     @staticmethod
     @lock_and_release
     async def add_new_user(
-        user_id: int, username: str, name: str, cr: sqlite3.Cursor = None
+        user_id: int,
+        username: str,
+        name: str,
+        cr: sqlite3.Cursor = None,
     ):
-        username = username if username else " "
-        name = name if name else " "
         cr.execute(
             "INSERT OR IGNORE INTO users(id, username, name) VALUES(?, ?, ?)",
-            (user_id, username, name),
+            (
+                user_id,
+                username,
+                name,
+            ),
         )
 
     @staticmethod
     @lock_and_release
     async def add_new_admin(user_id: int, cr: sqlite3.Cursor = None):
-        cr.execute("INSERT OR IGNORE INTO admins(id) VALUES(?)", (user_id,))
+        cr.execute(
+            "INSERT OR IGNORE INTO admins(id) VALUES(?)",
+            (user_id,),
+        )
 
     @staticmethod
     @lock_and_release
     async def remove_admin(user_id: int, cr: sqlite3.Cursor = None):
-        cr.execute("DELETE FROM admins WHERE id = ?", (user_id,))
+        cr.execute(
+            "DELETE FROM admins WHERE id = ?",
+            (user_id,),
+        )
 
     @staticmethod
     @connect_and_close
     def get_user(user_id: int, cr: sqlite3.Cursor = None):
-        cr.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        cr.execute(
+            "SELECT * FROM users WHERE id = ?",
+            (user_id,),
+        )
         return cr.fetchone()
 
     @staticmethod
@@ -118,3 +140,14 @@ class DB:
     def get_all_users(cr: sqlite3.Cursor = None):
         cr.execute("SELECT * FROM users")
         return cr.fetchall()
+
+    @staticmethod
+    @lock_and_release
+    async def set_banned(user_id: int, banned: int, cr: sqlite3.Cursor = None):
+        cr.execute(
+            "UPDATE users SET banned = ? WHERE id = ?",
+            (
+                banned,
+                user_id,
+            ),
+        )
