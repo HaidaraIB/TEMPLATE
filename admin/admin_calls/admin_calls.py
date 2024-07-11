@@ -16,6 +16,10 @@ from common.common import (
     request_buttons,
 )
 
+from common.back_to_home_page import (
+    HOME_PAGE_TEXT
+)
+
 from custom_filters.Admin import Admin
 
 async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -39,12 +43,12 @@ async def hide_ids_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.callback_query.delete_message()
             await context.bot.send_message(
                 chat_id=update.effective_user.id,
-                text="تم الإخفاء✅",
+                text="تم الإخفاء ✅",
                 reply_markup=ReplyKeyboardRemove(),
             )
             await context.bot.send_message(
                 chat_id=update.effective_user.id,
-                text="القائمة الرئيسية🔝",
+                text=HOME_PAGE_TEXT,
                 reply_markup=build_admin_keyboard(),
             )
         else:
@@ -52,12 +56,12 @@ async def hide_ids_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.callback_query.delete_message()
             await context.bot.send_message(
                 chat_id=update.effective_user.id,
-                text="تم الإظهار✅",
+                text="تم الإظهار ✅",
                 reply_markup=ReplyKeyboardMarkup(request_buttons, resize_keyboard=True),
             )
             await context.bot.send_message(
                 chat_id=update.effective_user.id,
-                text="القائمة الرئيسية🔝",
+                text=HOME_PAGE_TEXT,
                 reply_markup=build_admin_keyboard(),
             )
 

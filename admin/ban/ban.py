@@ -50,7 +50,7 @@ async def user_id_to_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYP
         user = DB.get_user(user_id=int(update.message.text))
         if not user:
             await update.message.reply_text(
-                text="لم يتم العثور على المستخدم، تأكد من الآيدي وأعد إرساله. ❌",
+                text="لم يتم العثور على المستخدم، تأكد من الآيدي وأعد إرساله ❌",
                 reply_markup=InlineKeyboardMarkup(back_to_admin_home_page_button),
             )
             return

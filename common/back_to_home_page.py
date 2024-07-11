@@ -17,10 +17,12 @@ from common.common import build_user_keyboard, build_admin_keyboard
 from custom_filters.User import User
 from custom_filters.Admin import Admin
 
+HOME_PAGE_TEXT = "القائمة الرئيسية 🔝"
+
 back_to_admin_home_page_button = [
     [
         InlineKeyboardButton(
-            text="العودة إلى القائمة الرئيسية🔙",
+            text="العودة إلى القائمة الرئيسية 🔙",
             callback_data="back to admin home page",
         )
     ],
@@ -29,7 +31,7 @@ back_to_admin_home_page_button = [
 back_to_user_home_page_button = [
     [
         InlineKeyboardButton(
-            text="العودة إلى القائمة الرئيسية🔙",
+            text="العودة إلى القائمة الرئيسية 🔙",
             callback_data="back to user home page",
         )
     ],
@@ -40,7 +42,7 @@ back_to_user_home_page_button = [
 async def back_to_user_home_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and User().filter(update):
         await update.callback_query.edit_message_text(
-            text="القائمة الرئيسية🔝",
+            text=HOME_PAGE_TEXT,
             reply_markup=build_user_keyboard(),
         )
         return ConversationHandler.END
@@ -49,7 +51,7 @@ async def back_to_user_home_page(update: Update, context: ContextTypes.DEFAULT_T
 async def back_to_admin_home_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
         await update.callback_query.edit_message_text(
-            text="القائمة الرئيسية🔝",
+            text=HOME_PAGE_TEXT,
             reply_markup=build_admin_keyboard(),
         )
         return ConversationHandler.END

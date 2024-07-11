@@ -1,7 +1,6 @@
 from telegram import (
     Update,
     Chat,
-    Bot,
     ReplyKeyboardMarkup,
     BotCommand,
     ReplyKeyboardRemove,
@@ -96,7 +95,7 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
         await update.message.reply_text(
-            text="تعمل الآن كآدمن🕹",
+            text="تعمل الآن كآدمن 🕹",
             reply_markup=build_admin_keyboard(),
         )
         return ConversationHandler.END

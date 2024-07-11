@@ -27,6 +27,7 @@ from common.common import (
 from common.back_to_home_page import (
     back_to_admin_home_page_button,
     back_to_admin_home_page_handler,
+    HOME_PAGE_TEXT,
 )
 
 from start import admin_command
@@ -118,7 +119,7 @@ async def new_admin_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
         await update.message.reply_text(
-            text="القائمة الرئيسية🔝",
+            text=HOME_PAGE_TEXT,
             reply_markup=build_admin_keyboard(),
         )
 
@@ -146,12 +147,12 @@ async def choose_admin_id_to_remove(update: Update, context: ContextTypes.DEFAUL
         admin_id = int(update.callback_query.data)
         if admin_id == int(os.getenv("OWNER_ID")):
             await update.callback_query.answer(
-                text="لا يمكنك إزالة مالك البوت من قائمة الآدمنز❗️"
+                text="لا يمكنك إزالة مالك البوت من قائمة الآدمنز ❗️"
             )
             return
 
         await DB.remove_admin(user_id=admin_id)
-        await update.callback_query.answer(text="تمت إزالة الآدمن بنجاح✅")
+        await update.callback_query.answer(text="تمت إزالة الآدمن بنجاح ✅")
         admins = DB.get_admin_ids()
         admin_ids_keyboard = [
             [InlineKeyboardButton(text=str(admin[0]), callback_data=str(admin[0]))]
@@ -169,7 +170,8 @@ async def choose_admin_id_to_remove(update: Update, context: ContextTypes.DEFAUL
 async def back_to_admin_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
         await update.callback_query.edit_message_text(
-            text="هل تريد:", reply_markup=InlineKeyboardMarkup(admin_settings_keyboard)
+            text="هل تريد:",
+            reply_markup=InlineKeyboardMarkup(admin_settings_keyboard),
         )
         return ConversationHandler.END
 
