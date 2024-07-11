@@ -6,6 +6,7 @@ from telegram import (
     ReplyKeyboardMarkup,
     KeyboardButton,
     KeyboardButtonRequestUsers,
+    ReplyKeyboardRemove,
 )
 
 from telegram.ext import (
@@ -17,7 +18,11 @@ from telegram.ext import (
 )
 
 
-from common.common import build_admin_keyboard, build_back_button
+from common.common import (
+    build_admin_keyboard,
+    build_back_button,
+    request_buttons,
+)
 
 from common.back_to_home_page import (
     back_to_admin_home_page_button,
@@ -95,10 +100,28 @@ async def new_admin_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             user_id = int(update.message.text)
         await DB.add_new_admin(user_id=user_id)
+        if (
+            not context.user_data.get("request_keyboard_hidden", None)
+            or not context.user_data["request_keyboard_hidden"]
+        ):
+            await update.message.reply_text(
+                text="تمت إضافة الآدمن بنجاح ✅",
+                reply_markup=ReplyKeyboardMarkup(
+                    request_buttons,
+                    resize_keyboard=True,
+                ),
+            )
+        else:
+            await update.message.reply_text(
+                text="تمت إضافة الآدمن بنجاح ✅",
+                reply_markup=ReplyKeyboardRemove(),
+            )
+
         await update.message.reply_text(
-            text="تمت إضافة الآدمن بنجاح✅.",
+            text="القائمة الرئيسية🔝",
             reply_markup=build_admin_keyboard(),
         )
+
         return ConversationHandler.END
 
 

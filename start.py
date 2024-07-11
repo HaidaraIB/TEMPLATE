@@ -84,7 +84,10 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
             context.user_data["request_keyboard_hidden"] = False
             await update.message.reply_text(
                 text="أهلاً بك...",
-                reply_markup=ReplyKeyboardMarkup(request_buttons, resize_keyboard=True),
+                reply_markup=ReplyKeyboardMarkup(
+                    request_buttons,
+                    resize_keyboard=True,
+                ),
             )
         else:
             await update.message.reply_text(
