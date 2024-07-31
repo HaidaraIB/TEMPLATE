@@ -32,12 +32,12 @@ from admin.admin_settings import *
 from admin.broadcast import *
 from admin.ban import *
 
-from DB import DB
+from models import create_tables
 
 from MyApp import MyApp
 
 def main():
-    DB.creat_tables()
+    create_tables()
     create_folders()
     
     app = MyApp().build_app()

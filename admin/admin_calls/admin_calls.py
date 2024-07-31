@@ -20,7 +20,7 @@ from common.back_to_home_page import (
     HOME_PAGE_TEXT
 )
 
-from custom_filters.Admin import Admin
+from custom_filters import Admin
 
 async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):

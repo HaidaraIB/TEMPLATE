@@ -3,6 +3,10 @@ from telegram import (
     Chat,
     InlineKeyboardMarkup,
     InlineKeyboardButton,
+    ReplyKeyboardMarkup,
+    KeyboardButtonRequestUsers,
+    KeyboardButton,
+    ReplyKeyboardRemove,
 )
 
 from telegram.ext import (
@@ -15,7 +19,7 @@ from telegram.ext import (
 
 from custom_filters import *
 
-from DB import DB
+import models
 
 from common.common import build_admin_keyboard, build_back_button
 
@@ -34,41 +38,64 @@ from start import admin_command
 
 async def ban_unban(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        text = (
-            "إرسل آيدي المستخدم الذي تريد حظره/فك الحظر عنه.\n\n"
-            "يمكنك استخدام كيبورد معرفة الآيديات، قم بالضغط على /start وإظهاره إن كان مخفياً."
-        )
-        await update.callback_query.edit_message_text(
-            text=text,
-            reply_markup=InlineKeyboardMarkup(back_to_admin_home_page_button),
+        await update.callback_query.answer()
+        await update.callback_query.delete_message()
+        await context.bot.send_message(
+            chat_id=update.effective_user.id,
+            text=(
+                "اختر حساب المستخدم الذي تريد حظره بالضغط على الزر أدناه\n\n"
+                "يمكنك إرسال الid برسالة أيضاً\n\n"
+                "أو إلغاء العملية بالضغط على /admin."
+            ),
+            reply_markup=ReplyKeyboardMarkup(
+                keyboard=[
+                    [
+                        KeyboardButton(
+                            text="اختيار حساب مستخدم",
+                            request_users=KeyboardButtonRequestUsers(
+                                request_id=4, user_is_bot=False
+                            ),
+                        )
+                    ]
+                ],
+                resize_keyboard=True,
+            ),
         )
         return USER_ID_TO_BAN_UNBAN
 
 
 async def user_id_to_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        user = DB.get_user(user_id=int(update.message.text))
+        if update.effective_message.users_shared:
+            user_id = update.effective_message.users_shared.users[0].user_id
+        else:
+            user_id = int(update.effective_message.text)
+
+        user = models.User.get_user(user_id=user_id)
         if not user:
             await update.message.reply_text(
-                text="لم يتم العثور على المستخدم، تأكد من الآيدي وأعد إرساله ❌",
-                reply_markup=InlineKeyboardMarkup(back_to_admin_home_page_button),
+                text="لم يتم العثور على المستخدم، تأكد من الآيدي ❌",
             )
             return
-        if user["banned"]:
+        if user.is_banned:
             ban_button = [
                 InlineKeyboardButton(
-                    text="فك الحظر 🔓", callback_data=f"unban {user['id']}"
+                    text="فك الحظر 🔓", callback_data=f"unban {user.id}"
                 )
             ]
         else:
             ban_button = [
-                InlineKeyboardButton(text="حظر 🔒", callback_data=f"ban {user['id']}")
+                InlineKeyboardButton(text="حظر 🔒", callback_data=f"ban {user.id}")
             ]
         keyboard = [
             ban_button,
             build_back_button("back to user id to ban unban"),
             back_to_admin_home_page_button[0],
         ]
+        await update.message.reply_text(
+            text="تم العثور على المستخدم ✅.",
+            reply_markup=ReplyKeyboardRemove(),
+        )
         await update.message.reply_text(
             text="هل تريد.",
             reply_markup=InlineKeyboardMarkup(keyboard),
@@ -81,7 +108,7 @@ back_to_user_id_to_ban_unban = ban_unban
 
 async def ban_unban_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        await DB.set_banned(
+        await models.User.set_banned(
             user_id=int(update.callback_query.data.split(" ")[-1]),
             banned=1 if update.callback_query.data.startswith("ban") else 0,
         )

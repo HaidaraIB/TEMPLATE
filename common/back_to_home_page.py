@@ -11,18 +11,16 @@ from telegram.ext import (
 )
 
 from common.force_join import check_if_user_member_decorator
-
 from common.common import build_user_keyboard, build_admin_keyboard
+from common.constants import *
 
-from custom_filters.User import User
-from custom_filters.Admin import Admin
+from custom_filters import User, Admin
 
-HOME_PAGE_TEXT = "القائمة الرئيسية 🔝"
 
 back_to_admin_home_page_button = [
     [
         InlineKeyboardButton(
-            text="العودة إلى القائمة الرئيسية 🔙",
+            text=BACK_TO_HOME_PAGE_TEXT,
             callback_data="back to admin home page",
         )
     ],
@@ -31,7 +29,7 @@ back_to_admin_home_page_button = [
 back_to_user_home_page_button = [
     [
         InlineKeyboardButton(
-            text="العودة إلى القائمة الرئيسية 🔙",
+            text=BACK_TO_HOME_PAGE_TEXT,
             callback_data="back to user home page",
         )
     ],

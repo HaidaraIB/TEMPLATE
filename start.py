@@ -15,8 +15,7 @@ from telegram.ext import (
 
 
 import os
-from DB import DB
-
+import models
 from common.force_join import check_if_user_member
 
 from custom_filters import Admin
@@ -29,7 +28,7 @@ from common.common import (
 
 
 async def inits(app: Application):
-    await DB.add_new_admin(user_id=int(os.getenv("OWNER_ID")))
+    await models.Admin.add_new_admin(user_id=int(os.getenv("OWNER_ID")))
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -42,10 +41,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ),
             ]
         )
-        old_user = DB.get_user(user_id=update.effective_user.id)
+        old_user = models.User.get_user(user_id=update.effective_user.id)
         if not old_user:
             new_user = update.effective_user
-            await DB.add_new_user(
+            await models.User.add_new_user(
                 user_id=new_user.id,
                 username=new_user.username,
                 name=new_user.full_name,

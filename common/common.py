@@ -6,18 +6,9 @@ from telegram import (
     KeyboardButtonRequestChat,
     KeyboardButtonRequestUsers,
 )
-
-from telegram.ext import (
-    ContextTypes,
-)
-
-
-from telegram.constants import (
-    ChatType,
-)
-
+from telegram.ext import ContextTypes
+from telegram.constants import ChatType
 from telegram.error import TimedOut, NetworkError
-
 import os
 import uuid
 import traceback
@@ -35,6 +26,7 @@ logging.basicConfig(
 )
 if int(os.getenv("OWNER_ID")) != 755501092:
     logging.getLogger("httpx").setLevel(logging.WARNING)
+
 
 def build_user_keyboard():
     keyboard = []
@@ -110,10 +102,6 @@ def create_folders():
 async def invalid_callback_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == ChatType.PRIVATE:
         await update.callback_query.answer("انتهت صلاحية هذا الزر")
-        # try:
-        #     await update.callback_query.delete_message()
-        # except BadRequest:
-        #     pass
 
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:

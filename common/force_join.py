@@ -15,9 +15,7 @@ from telegram.constants import (
 )
 
 import os
-
 from common.common import build_user_keyboard
-
 import functools
 
 def check_if_user_member_decorator(func):

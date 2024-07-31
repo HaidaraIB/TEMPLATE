@@ -23,9 +23,9 @@ from common.back_to_home_page import (
 
 from start import start_command
 
-from DB import DB
+import models
 import asyncio
-from custom_filters.Admin import Admin
+from custom_filters import Admin
 
 (
     THE_MESSAGE,
@@ -74,11 +74,11 @@ back_to_the_message = broadcast_message
 
 
 async def send_to_all(context: ContextTypes.DEFAULT_TYPE):
-    all_users = DB.get_all_users()
+    all_users = models.User.get_all_users()
     text = context.user_data["the message"] + "\n\n<b>🚩🚩🚩 هذه الرسالة من آدمن البوت 🚩🚩🚩</b>"
     for user in all_users:
         try:
-            await context.bot.send_message(chat_id=user[0], text=text)
+            await context.bot.send_message(chat_id=user.id, text=text)
         except:
             pass
 

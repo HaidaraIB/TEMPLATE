@@ -1,16 +1,10 @@
-from telegram import (
-    Update,
-)
+from telegram import Update
+from telegram.ext.filters import UpdateFilter
+import models
 
-from telegram import Chat
-from telegram.ext.filters import (
-    UpdateFilter
-)
-from DB import DB
 
 class User(UpdateFilter):
     def filter(self, update: Update):
-        user = DB.get_user(user_id=update.effective_user.id)
-        result = DB.get_admin_ids()
-        admin_ids = [id[0] for id in result]
+        admins = models.Admin.get_admin_ids()
+        admin_ids = [admin.id for admin in admins]
         return update.effective_user.id not in admin_ids
