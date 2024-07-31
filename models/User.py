@@ -48,7 +48,7 @@ class User(BaseUser):
     @staticmethod
     @lock_and_release
     async def set_banned(user_id: int, banned: bool, s: Session = None):
-        s.query(User).filter_by(user_id=user_id).update(
+        s.query(User).filter_by(id=user_id).update(
             {
                 User.is_banned: banned,
             },

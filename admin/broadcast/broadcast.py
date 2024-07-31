@@ -21,7 +21,7 @@ from common.back_to_home_page import (
     back_to_admin_home_page_button,
 )
 
-from start import start_command
+from start import start_command, admin_command
 
 import models
 import asyncio
@@ -195,6 +195,7 @@ broadcast_message_handler = ConversationHandler(
     fallbacks=[
         back_to_admin_home_page_handler,
         start_command,
+        admin_command,
         CallbackQueryHandler(back_to_the_message, "^back to the message$"),
         CallbackQueryHandler(back_to_send_to, "^back to send to$"),
     ],

@@ -3,11 +3,9 @@ from sqlalchemy.orm import declarative_base, Session
 import traceback
 from asyncio import Lock
 from models import *
-from constants import *
 
 lock = Lock()
 Base = declarative_base()
-# engine = create_engine("sqlite:///data_test/test.sqlite3")
 engine = create_engine("sqlite:///data/database.sqlite3")
 
 

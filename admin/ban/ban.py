@@ -110,7 +110,7 @@ async def ban_unban_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
         await models.User.set_banned(
             user_id=int(update.callback_query.data.split(" ")[-1]),
-            banned=1 if update.callback_query.data.startswith("ban") else 0,
+            banned=True if update.callback_query.data.startswith("ban") else False,
         )
 
         await update.callback_query.edit_message_text(
@@ -132,12 +132,16 @@ ban_unban_user_handler = ConversationHandler(
             MessageHandler(
                 filters=filters.Regex("^\d+$"),
                 callback=user_id_to_ban_unban,
-            )
+            ),
+            MessageHandler(
+                filters=filters.StatusUpdate.USERS_SHARED,
+                callback=user_id_to_ban_unban,
+            ),
         ],
         BAN_UNBAN_USER: [
             CallbackQueryHandler(
                 ban_unban_user,
-                "^ban \d+$|^unban \d+$",
+                "^((ban)|(unban)) \d+$",
             ),
         ],
     },
