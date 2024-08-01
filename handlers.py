@@ -37,10 +37,10 @@ from models import create_tables
 from MyApp import MyApp
 
 def main():
-    create_tables()
     create_folders()
+    create_tables()
     
-    app = MyApp().build_app()
+    app = MyApp.build_app()
 
     app.add_handler(
         CallbackQueryHandler(
