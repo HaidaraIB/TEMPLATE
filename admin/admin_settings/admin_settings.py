@@ -32,10 +32,9 @@ async def show_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
             continue
         text += "<code>" + str(admin.id) + "</code>" + "\n"
     text += "\nاختر ماذا تريد أن تفعل:"
-    keyboard = build_admin_keyboard()
     await update.callback_query.edit_message_text(
         text=text,
-        reply_markup=keyboard,
+        reply_markup=build_admin_keyboard(),
     )
 
 

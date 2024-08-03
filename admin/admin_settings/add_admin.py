@@ -1,7 +1,6 @@
 from telegram import (
     Chat,
     Update,
-    InlineKeyboardMarkup,
     KeyboardButton,
     ReplyKeyboardMarkup,
     KeyboardButtonRequestUsers,
@@ -15,14 +14,17 @@ from telegram.ext import (
     filters,
 )
 
+import models
+
+from common.back_to_home_page import back_to_admin_home_page_handler
 from common.common import build_admin_keyboard
+from common.constants import *
+
+from custom_filters import Admin
 
 from admin.admin_settings.common import back_to_admin_settings
-from custom_filters import Admin
-import models
-from common.constants import *
+
 from start import admin_command, start_command
-from common.back_to_home_page import back_to_admin_home_page_handler
 
 NEW_ADMIN_ID = 0
 

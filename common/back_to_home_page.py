@@ -10,7 +10,7 @@ from telegram.ext import (
     ConversationHandler,
 )
 
-from common.force_join import check_if_user_member_decorator
+from common.decorators import check_if_user_member_decorator
 from common.common import build_user_keyboard, build_admin_keyboard
 from common.constants import *
 
