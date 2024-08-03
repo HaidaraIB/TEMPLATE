@@ -4,6 +4,7 @@ from telegram import (
     ReplyKeyboardMarkup,
     BotCommand,
     ReplyKeyboardRemove,
+    BotCommandScopeChat,
 )
 
 from telegram.ext import (
@@ -16,44 +17,39 @@ from telegram.ext import (
 
 import os
 import models
-from common.force_join import check_if_user_member
-
 from custom_filters import Admin
-from common.decorators import check_if_user_banned_dec
+from common.decorators import (
+    check_if_user_banned_dec,
+    add_new_user_dec,
+    check_if_user_member_decorator,
+)
 from common.common import (
     build_user_keyboard,
     build_admin_keyboard,
-    request_buttons,
+    check_hidden_keyboard,
 )
 
 
 async def inits(app: Application):
     await models.Admin.add_new_admin(admin_id=int(os.getenv("OWNER_ID")))
 
+
+async def set_commands(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    st_cmd = ("start", "start command")
+    commands = [st_cmd]
+    if Admin().filter(update):
+        commands.append(("admin", "admin command"))
+    await context.bot.set_my_commands(
+        commands=commands, scope=BotCommandScopeChat(chat_id=update.effective_chat.id)
+    )
+
+
+@add_new_user_dec
 @check_if_user_banned_dec
+@check_if_user_member_decorator
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE:
-        await context.bot.set_my_commands(
-            commands=[
-                BotCommand(
-                    command="start",
-                    description="home page",
-                ),
-            ]
-        )
-        old_user = models.User.get_user(user_id=update.effective_user.id)
-        if not old_user:
-            new_user = update.effective_user
-            await models.User.add_new_user(
-                user_id=new_user.id,
-                username=new_user.username,
-                name=new_user.full_name,
-            )
-
-        member = await check_if_user_member(update=update, context=context)
-        if not member:
-            return
-
+        await set_commands(update, context)
         await update.message.reply_text(
             text="أهلاً بك...",
             reply_markup=build_user_keyboard(),
@@ -63,35 +59,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        await context.bot.set_my_commands(
-            commands=[
-                BotCommand(
-                    command="start",
-                    description="home page",
-                ),
-                BotCommand(
-                    command="admin",
-                    description="control panel",
-                ),
-            ]
+        await set_commands(update, context)
+        await update.message.reply_text(
+            text="أهلاً بك...",
+            reply_markup=check_hidden_keyboard(context),
         )
-        if (
-            not context.user_data.get("request_keyboard_hidden", None)
-            or not context.user_data["request_keyboard_hidden"]
-        ):
-            context.user_data["request_keyboard_hidden"] = False
-            await update.message.reply_text(
-                text="أهلاً بك...",
-                reply_markup=ReplyKeyboardMarkup(
-                    request_buttons,
-                    resize_keyboard=True,
-                ),
-            )
-        else:
-            await update.message.reply_text(
-                text="أهلاً بك...",
-                reply_markup=ReplyKeyboardRemove(),
-            )
 
         await update.message.reply_text(
             text="تعمل الآن كآدمن 🕹",

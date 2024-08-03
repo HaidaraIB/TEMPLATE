@@ -9,23 +9,9 @@ from telegram.ext import (
     CallbackQueryHandler,
 )
 
-
-from telegram.constants import (
-    ChatMemberStatus,
-)
-
-import os
+from telegram.constants import ChatMemberStatus
 from common.common import build_user_keyboard
-import functools
-
-def check_if_user_member_decorator(func):
-    @functools.wraps(func)
-    async def wrapper(update, context, *args, **kwargs):
-        is_user_member = await check_if_user_member(update=update, context=context)
-        if not is_user_member:
-            return
-        return await func(update, context, *args, **kwargs)
-    return wrapper
+import os
 
 
 async def check_if_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -33,23 +19,21 @@ async def check_if_user_member(update: Update, context: ContextTypes.DEFAULT_TYP
         chat_id=int(os.getenv("CHANNEL_ID")), user_id=update.effective_user.id
     )
     if chat_member.status == ChatMemberStatus.LEFT:
-        text = f"""لبدء استخدام البوت  يجب عليك الانضمام الى قناة البوت أولاً.
-        
-✅ اشترك أولاً 👇.
-🔗 {os.getenv("CHANNEL_LINK")}
-
-ثم اضغط تحقق✅"""
-        check_joined_button = [
-            [InlineKeyboardButton(text="تحقق✅", callback_data="check joined")]
-        ]
+        text = (
+            f"لبدء استخدام البوت يجب عليك الانضمام الى قناة البوت أولاً.\n\n"
+            "✅ اشترك أولاً 👇.\n"
+            f"🔗 {os.getenv('CHANNEL_LINK')}\n\n"
+            "ثم اضغط تحقق✅"
+        )
+        markup = InlineKeyboardMarkup.from_button(
+            InlineKeyboardButton(text="تحقق✅", callback_data="check joined")
+        )
         if update.callback_query:
             await update.callback_query.edit_message_text(
-                text=text, reply_markup=InlineKeyboardMarkup(check_joined_button)
+                text=text, reply_markup=markup
             )
         else:
-            await update.message.reply_text(
-                text=text, reply_markup=InlineKeyboardMarkup(check_joined_button)
-            )
+            await update.message.reply_text(text=text, reply_markup=markup)
         return False
     return True
 
@@ -64,11 +48,11 @@ async def check_joined(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    text = "أهلاً بك..."
     await update.callback_query.edit_message_text(
-        text=text,
+        text="أهلاً بك...",
         reply_markup=build_user_keyboard(),
     )
+
 
 check_joined_handler = CallbackQueryHandler(
     callback=check_joined, pattern="^check joined$"

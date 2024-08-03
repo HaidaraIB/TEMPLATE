@@ -5,6 +5,8 @@ from telegram import (
     KeyboardButton,
     KeyboardButtonRequestChat,
     KeyboardButtonRequestUsers,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
 )
 from telegram.ext import ContextTypes
 from telegram.constants import ChatType
@@ -26,6 +28,19 @@ logging.basicConfig(
 )
 if int(os.getenv("OWNER_ID")) != 755501092:
     logging.getLogger("httpx").setLevel(logging.WARNING)
+
+
+def check_hidden_keyboard(context: ContextTypes.DEFAULT_TYPE):
+    if (
+        not context.user_data.get("request_keyboard_hidden", None)
+        or not context.user_data["request_keyboard_hidden"]
+    ):
+        context.user_data["request_keyboard_hidden"] = False
+
+        reply_markup = ReplyKeyboardMarkup(request_buttons, resize_keyboard=True)
+    else:
+        reply_markup = ReplyKeyboardRemove()
+    return reply_markup
 
 
 def build_user_keyboard():
