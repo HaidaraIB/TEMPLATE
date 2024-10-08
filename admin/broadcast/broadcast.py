@@ -6,7 +6,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from common.common import build_admin_keyboard
+from common.keyboards import build_admin_keyboard
 from admin.broadcast.common import build_broadcast_keyboard, send_to, build_done_button
 from common.back_to_home_page import (
     back_to_admin_home_page_handler,

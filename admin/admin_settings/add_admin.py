@@ -17,7 +17,7 @@ from telegram.ext import (
 import models
 
 from common.back_to_home_page import back_to_admin_home_page_handler
-from common.common import build_admin_keyboard
+from common.keyboards import build_admin_keyboard
 from common.constants import *
 
 from custom_filters import Admin

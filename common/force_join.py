@@ -1,16 +1,7 @@
-from telegram import (
-    Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-)
-
-from telegram.ext import (
-    ContextTypes,
-    CallbackQueryHandler,
-)
-
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ContextTypes, CallbackQueryHandler
 from telegram.constants import ChatMemberStatus
-from common.common import build_user_keyboard
+from common.keyboards import build_user_keyboard
 import os
 
 

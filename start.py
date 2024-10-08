@@ -1,20 +1,10 @@
-from telegram import (
-    Update,
-    Chat,
-    ReplyKeyboardMarkup,
-    BotCommand,
-    ReplyKeyboardRemove,
-    BotCommandScopeChat,
-)
-
+from telegram import Update, Chat, BotCommandScopeChat
 from telegram.ext import (
     CommandHandler,
     ContextTypes,
     Application,
     ConversationHandler,
 )
-
-
 import os
 import models
 from custom_filters import Admin
@@ -23,11 +13,8 @@ from common.decorators import (
     add_new_user_dec,
     check_if_user_member_decorator,
 )
-from common.common import (
-    build_user_keyboard,
-    build_admin_keyboard,
-    check_hidden_keyboard,
-)
+from common.keyboards import build_user_keyboard, build_admin_keyboard
+from common.common import check_hidden_keyboard
 
 
 async def inits(app: Application):

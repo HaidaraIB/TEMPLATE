@@ -1,14 +1,6 @@
-from telegram import (
-    Chat,
-    Update,
-    InlineKeyboardMarkup,
-)
-from telegram.ext import (
-    ContextTypes,
-    CallbackQueryHandler,
-)
-
-from common.common import build_admin_keyboard
+from telegram import Chat, Update, InlineKeyboardMarkup
+from telegram.ext import ContextTypes, CallbackQueryHandler
+from common.keyboards import build_admin_keyboard
 from admin.admin_settings.common import admin_settings_keyboard
 import os
 from custom_filters import Admin

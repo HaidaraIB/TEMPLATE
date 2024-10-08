@@ -1,16 +1,7 @@
-from telegram import (
-    Chat,
-    Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-)
-from telegram.ext import (
-    ContextTypes,
-    CallbackQueryHandler,
-    ConversationHandler,
-)
+from telegram import Chat, Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ContextTypes, CallbackQueryHandler, ConversationHandler
 from start import start_command, admin_command
-from common.common import build_back_button
+from common.keyboards import build_back_button
 from common.back_to_home_page import (
     back_to_admin_home_page_button,
     back_to_admin_home_page_handler,

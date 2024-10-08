@@ -1,26 +1,15 @@
-from telegram import (
-    Chat,
-    Update,
-    ReplyKeyboardRemove,
-    ReplyKeyboardMarkup,
-)
-from telegram.ext import (
-    ContextTypes,
-    CallbackQueryHandler,
-    MessageHandler,
-    filters,
-)
+from telegram import Chat, Update, ReplyKeyboardRemove, ReplyKeyboardMarkup
+from telegram.ext import ContextTypes, CallbackQueryHandler, MessageHandler, filters
 
-from common.common import (
+from common.keyboards import (
     build_admin_keyboard,
-    request_buttons,
+    build_request_buttons,
 )
 
-from common.back_to_home_page import (
-    HOME_PAGE_TEXT
-)
+from common.back_to_home_page import HOME_PAGE_TEXT
 
 from custom_filters import Admin
+
 
 async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
@@ -32,6 +21,7 @@ async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(
                 text=f"🆔: <code>{update.effective_message.chat_shared.chat_id}</code>",
             )
+
 
 async def hide_ids_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
@@ -52,6 +42,7 @@ async def hide_ids_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=build_admin_keyboard(),
             )
         else:
+            request_buttons = build_request_buttons()
             context.user_data["request_keyboard_hidden"] = False
             await update.callback_query.delete_message()
             await context.bot.send_message(
@@ -66,7 +57,9 @@ async def hide_ids_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
 
-hide_ids_keyboard_handler = CallbackQueryHandler(callback=hide_ids_keyboard, pattern="^hide ids keyboard$")
+hide_ids_keyboard_handler = CallbackQueryHandler(
+    callback=hide_ids_keyboard, pattern="^hide ids keyboard$"
+)
 
 find_id_handler = MessageHandler(
     filters=filters.StatusUpdate.USERS_SHARED | filters.StatusUpdate.CHAT_SHARED,

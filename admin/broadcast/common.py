@@ -1,6 +1,6 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from telegram.ext import ContextTypes
-from common.common import build_back_button
+from common.keyboards import build_back_button
 from common.back_to_home_page import back_to_admin_home_page_button
 import models
 

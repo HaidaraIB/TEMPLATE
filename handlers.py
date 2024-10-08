@@ -1,28 +1,12 @@
-from telegram import (
-    Update,
-)
-
-from telegram.ext import (
-    CallbackQueryHandler,
-    InvalidCallbackData,
-)
-
-from start import (
-    start_command,
-    admin_command
-)
-
-from common.common import (
-    invalid_callback_data,
-    error_handler,
-    create_folders
-)
-
+from telegram import Update
+from telegram.ext import CallbackQueryHandler, InvalidCallbackData
+from start import start_command, admin_command
+from common.common import invalid_callback_data, create_folders
 from common.back_to_home_page import (
     back_to_admin_home_page_handler,
-    back_to_user_home_page_handler
+    back_to_user_home_page_handler,
 )
-
+from common.error_handler import error_handler
 from common.force_join import check_joined_handler
 
 from user.user_calls import *
@@ -36,10 +20,11 @@ from models import create_tables
 
 from MyApp import MyApp
 
+
 def main():
     create_folders()
     create_tables()
-    
+
     app = MyApp.build_app()
 
     app.add_handler(
