@@ -13,7 +13,7 @@ def check_if_user_banned_dec(func):
         user = models.User.get_users(user_id=update.effective_user.id)
         if user.is_banned:
             return
-        await func(update, context, *args, **kwargs)
+        return await func(update, context, *args, **kwargs)
 
     return wrapper
 
@@ -31,7 +31,7 @@ def add_new_user_dec(func):
                 username=new_user.username,
                 name=new_user.full_name,
             )
-        await func(update, context, *args, **kwargs)
+        return await func(update, context, *args, **kwargs)
 
     return wrapper
 
