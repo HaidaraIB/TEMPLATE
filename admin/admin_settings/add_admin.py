@@ -13,18 +13,13 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-
-import models
-
 from common.back_to_home_page import back_to_admin_home_page_handler
 from common.keyboards import build_admin_keyboard
 from common.constants import *
-
 from custom_filters import Admin
-
-from admin.admin_settings.common import back_to_admin_settings
-
-from start import admin_command, start_command
+from admin.admin_settings.admin_settings import admin_settings_handler
+from start import admin_command
+import models
 
 NEW_ADMIN_ID = 0
 
@@ -95,12 +90,8 @@ add_admin_handler = ConversationHandler(
         ]
     },
     fallbacks=[
-        CallbackQueryHandler(
-            callback=back_to_admin_settings,
-            pattern="^back_to_admin_settings$",
-        ),
+        admin_settings_handler,
         admin_command,
-        start_command,
         back_to_admin_home_page_handler,
     ],
 )

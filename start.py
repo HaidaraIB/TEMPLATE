@@ -5,7 +5,6 @@ from telegram.ext import (
     Application,
     ConversationHandler,
 )
-import os
 import models
 from custom_filters import Admin
 from common.decorators import (
@@ -15,10 +14,10 @@ from common.decorators import (
 )
 from common.keyboards import build_user_keyboard, build_admin_keyboard
 from common.common import check_hidden_keyboard
-
+from Config import Config
 
 async def inits(app: Application):
-    await models.Admin.add_new_admin(admin_id=int(os.getenv("OWNER_ID")))
+    await models.Admin.add_new_admin(admin_id=Config.OWNER_ID)
 
 
 async def set_commands(update: Update, context: ContextTypes.DEFAULT_TYPE):

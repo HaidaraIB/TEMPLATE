@@ -4,8 +4,8 @@ from telegram.error import TimedOut, NetworkError
 import traceback
 import json
 import html
-import os
 from common.constants import *
+from Config import Config
 
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -31,7 +31,7 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     write_error(error)
 
     await context.bot.send_message(
-        chat_id=int(os.getenv("ERRORS_CHANNEL")),
+        chat_id=Config.ERRORS_CHANNEL,
         text=f"<pre>{html.escape(tb_string)}</pre>",
     )
 

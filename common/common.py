@@ -1,12 +1,9 @@
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ContextTypes
 from telegram.constants import ChatType
-import os
 import uuid
 from common.keyboards import build_request_buttons
-from dotenv import load_dotenv
-
-load_dotenv()
+from Config import Config
 
 import logging
 
@@ -14,7 +11,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
-if int(os.getenv("OWNER_ID")) != 755501092:
+if Config.OWNER_ID != 755501092:
     logging.getLogger("httpx").setLevel(logging.WARNING)
 
 

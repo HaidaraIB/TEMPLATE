@@ -2,18 +2,18 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackQueryHandler
 from telegram.constants import ChatMemberStatus
 from common.keyboards import build_user_keyboard
-import os
+from Config import Config
 
 
 async def check_if_user_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_member = await context.bot.get_chat_member(
-        chat_id=int(os.getenv("CHANNEL_ID")), user_id=update.effective_user.id
+        chat_id=Config.FORCE_JOIN_CHANNEL_ID, user_id=update.effective_user.id
     )
     if chat_member.status == ChatMemberStatus.LEFT:
         text = (
             f"لبدء استخدام البوت يجب عليك الانضمام الى قناة البوت أولاً.\n\n"
             "✅ اشترك أولاً 👇.\n"
-            f"🔗 {os.getenv('CHANNEL_LINK')}\n\n"
+            f"🔗 {Config.FORCE_JOIN_CHANNEL_LINK}\n\n"
             "ثم اضغط تحقق✅"
         )
         markup = InlineKeyboardMarkup.from_button(
@@ -31,7 +31,7 @@ async def check_if_user_member(update: Update, context: ContextTypes.DEFAULT_TYP
 
 async def check_joined(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_memeber = await context.bot.get_chat_member(
-        chat_id=int(os.getenv("CHANNEL_ID")), user_id=update.effective_user.id
+        chat_id=Config.FORCE_JOIN_CHANNEL_ID, user_id=update.effective_user.id
     )
     if chat_memeber.status == ChatMemberStatus.LEFT:
         await update.callback_query.answer(

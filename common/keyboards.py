@@ -78,3 +78,22 @@ def build_request_buttons():
         ],
     ]
     return keyboard
+
+
+def build_keyboard(columns: int, texts, buttons_data):
+    keyboard = []
+    for i in range(0, len(buttons_data), columns):
+        row = []
+        for j in range(columns):
+            try:
+                row.append(
+                    InlineKeyboardButton(
+                        text=texts[i + j],
+                        callback_data=buttons_data[i + j],
+                    )
+                )
+            except IndexError:
+                keyboard.append(row)
+                return keyboard
+        keyboard.append(row)
+    return keyboard

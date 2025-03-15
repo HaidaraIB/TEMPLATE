@@ -6,8 +6,9 @@ from telegram.ext import (
 from telegram.constants import ParseMode
 from ptbcontrib.ptb_jobstores.sqlalchemy import PTBSQLAlchemyJobStore
 
-import os
 from start import inits
+from Config import Config
+
 
 class MyApp:
     @classmethod
@@ -18,7 +19,7 @@ class MyApp:
         )
         app = (
             ApplicationBuilder()
-            .token(os.getenv("BOT_TOKEN"))
+            .token(Config.BOT_TOKEN)
             .post_init(inits)
             .persistence(persistence=my_persistence)
             .defaults(defaults)

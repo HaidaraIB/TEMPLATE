@@ -1,5 +1,5 @@
-import os
 from telethon import TelegramClient
+from Config import Config
 
 
 class TeleClientSingleton(TelegramClient):
@@ -9,10 +9,10 @@ class TeleClientSingleton(TelegramClient):
         if not cls._instance:
 
             cls._instance = TelegramClient(
-                session=os.getenv("SESSION"),
-                api_id=int(os.getenv("API_ID")),
-                api_hash=os.getenv("API_HASH"),
+                session=Config.SESSION,
+                api_id=Config.API_ID,
+                api_hash=Config.API_HASH,
             ).start(
-                bot_token=os.getenv("BOT_TOKEN"),
+                bot_token=Config.BOT_TOKEN,
             )
         return cls._instance

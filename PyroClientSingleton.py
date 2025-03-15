@@ -1,5 +1,5 @@
-import os
 from pyrogram import Client
+from Config import Config
 
 
 class PyroClientSingleton(Client):
@@ -9,9 +9,9 @@ class PyroClientSingleton(Client):
         if not cls._instance:
 
             cls._instance = Client(
-                name=os.getenv("SESSION"),
-                api_id=int(os.getenv("API_ID")),
-                api_hash=os.getenv("API_HASH"),
-                bot_token=os.getenv("BOT_TOKEN"),
+                name=Config.SESSION,
+                api_id=Config.API_ID,
+                api_hash=Config.API_HASH,
+                bot_token=Config.BOT_TOKEN,
             )
         return cls._instance
