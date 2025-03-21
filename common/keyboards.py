@@ -16,7 +16,7 @@ def build_admin_keyboard():
     keyboard = [
         [
             InlineKeyboardButton(
-                text="إعدادات الآدمن⚙️🎛",
+                text="إعدادات الآدمن ⚙️🎛",
                 callback_data="admin settings",
             )
         ],
@@ -43,20 +43,20 @@ def build_admin_keyboard():
 
 
 def build_back_button(data: str):
-    return [InlineKeyboardButton(text="الرجوع🔙", callback_data=data)]
+    return [InlineKeyboardButton(text="الرجوع 🔙", callback_data=data)]
 
 
 def build_request_buttons():
     keyboard = [
         [
             KeyboardButton(
-                text="معرفة id مستخدم🆔",
+                text="معرفة id مستخدم 🆔",
                 request_users=KeyboardButtonRequestUsers(
                     request_id=0, user_is_bot=False
                 ),
             ),
             KeyboardButton(
-                text="معرفة id قناة📢",
+                text="معرفة id قناة 📢",
                 request_chat=KeyboardButtonRequestChat(
                     request_id=1, chat_is_channel=True
                 ),
@@ -64,13 +64,13 @@ def build_request_buttons():
         ],
         [
             KeyboardButton(
-                text="معرفة id مجموعة👥",
+                text="معرفة id مجموعة 👥",
                 request_chat=KeyboardButtonRequestChat(
                     request_id=2, chat_is_channel=False
                 ),
             ),
             KeyboardButton(
-                text="معرفة id بوت🤖",
+                text="معرفة id بوت 🤖",
                 request_users=KeyboardButtonRequestUsers(
                     request_id=3, user_is_bot=True
                 ),

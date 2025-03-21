@@ -1,7 +1,5 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Chat, Update
-from telegram.ext import ContextTypes, ConversationHandler
-from custom_filters import Admin
-from common.back_to_home_page import back_to_admin_home_page_button
+from telegram import InlineKeyboardButton
+import models
 
 
 def build_admin_settings_keyboard():
@@ -18,9 +16,17 @@ def build_admin_settings_keyboard():
         ],
         [
             InlineKeyboardButton(
-                text="عرض آيديات الآدمنز الحاليين 🆔",
+                text="عرض الآدمنز الحاليين 👓",
                 callback_data="show admins",
             )
         ],
     ]
     return keyboard
+
+
+def stringify_admin(admin: models.User):
+    return (
+        f"ID: <code>{admin.user_id}</code>\n"
+        f"Username: {f'@{admin.username}' if admin.username else '<i>لا يوجد</i>'}\n"
+        f"Full Name: {f'<b>{admin.name}</b>'}\n\n"
+    )

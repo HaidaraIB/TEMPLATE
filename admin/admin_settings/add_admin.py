@@ -32,7 +32,8 @@ async def add_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=update.effective_user.id,
             text=(
                 "اختر حساب الآدمن الذي تريد إضافته بالضغط على الزر أدناه\n\n"
-                "يمكنك إلغاء العملية بالضغط على /admin."
+                "يمكنك إرسال الid برسالة أيضاً\n\n"
+                "أو إلغاء العملية بالضغط على /admin."
             ),
             reply_markup=ReplyKeyboardMarkup(
                 keyboard=[
@@ -58,9 +59,27 @@ async def new_admin_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             admin_id = int(update.message.text)
 
-        await models.Admin.add_new_admin(admin_id=admin_id)
+        admin = models.User.get_by(
+            conds={
+                "user_id": admin_id,
+            },
+        )
+
+        if not admin:
+            admin_chat = await context.bot.get_chat(chat_id=admin_id)
+            await models.User.add(
+                {
+                    "user_id": admin_chat.id,
+                    "username": admin_chat.username if admin_chat.username else "",
+                    "name": admin_chat.full_name,
+                    "is_admin": True,
+                }
+            )
+        else:
+            await admin.update_one(update_dict={"is_admin": True})
+
         await update.message.reply_text(
-            text="تمت إضافة الآدمن بنجاح ✅.",
+            text="تمت إضافة الآدمن بنجاح ✅",
             reply_markup=ReplyKeyboardRemove(),
         )
         await update.message.reply_text(

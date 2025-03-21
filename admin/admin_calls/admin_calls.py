@@ -1,13 +1,7 @@
 from telegram import Chat, Update, ReplyKeyboardRemove, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackQueryHandler, MessageHandler, filters
-
-from common.keyboards import (
-    build_admin_keyboard,
-    build_request_buttons,
-)
-
-from common.back_to_home_page import HOME_PAGE_TEXT
-
+from common.keyboards import build_admin_keyboard, build_request_buttons
+from common.back_to_home_page import *
 from custom_filters import Admin
 
 

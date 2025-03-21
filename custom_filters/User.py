@@ -5,6 +5,8 @@ import models
 
 class User(UpdateFilter):
     def filter(self, update: Update):
-        return update.effective_user.id not in [
-            admin.id for admin in models.Admin.get_admin_ids()
-        ]
+        return not models.User.get_by(
+            conds={
+                "user_id": update.effective_user.id,
+            }
+        ).is_admin

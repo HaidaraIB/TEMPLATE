@@ -1,45 +1,16 @@
-from sqlalchemy import PrimaryKeyConstraint, Column, Boolean, select, insert
-from models.DB import connect_and_close, lock_and_release
-from sqlalchemy.orm import Session
-from models.BaseUser import BaseUser
+import sqlalchemy as sa
+from models.BaseModel import BaseModel
+from enum import Enum
 
 
-class User(BaseUser):
-    is_banned = Column(Boolean, default=0)
+class User(BaseModel):
     __tablename__ = "users"
-    __table_args__ = (PrimaryKeyConstraint("id", name="_id_user"),)
 
-    @classmethod
-    @lock_and_release
-    async def add_new_user(
-        cls, user_id: int, username: str, name: str, s: Session = None
-    ):
-        s.execute(
-            insert(cls)
-            .values(id=user_id, username=username if username else "", name=name)
-            .prefix_with("OR IGNORE")
-        )
+    user_id = sa.Column(sa.BigInteger, unique=True)
+    username = sa.Column(sa.String)
+    name = sa.Column(sa.String)
+    is_banned = sa.Column(sa.Boolean, default=0)
+    is_admin = sa.Column(sa.Boolean, default=0)
 
-    @classmethod
-    @connect_and_close
-    def get_users(cls, user_id: int = None, s: Session = None):
-        if user_id:
-            res = s.execute(select(cls).where(cls.id == user_id))
-            try:
-                return res.fetchone().t[0]
-            except:
-                return
-        res = s.execute(select(cls))
-        try:
-            return list(map(lambda x: x[0], res.tuples().all()))
-        except:
-            pass
-
-    @classmethod
-    @lock_and_release
-    async def set_banned(cls, user_id: int, banned: bool, s: Session = None):
-        s.query(cls).filter_by(id=user_id).update(
-            {
-                cls.is_banned: banned,
-            },
-        )
+    def __repr__(self):
+        return f"User(user_id={self.user_id}, username={self.username}, name={self.name}, is_admin={bool(self.is_admin)}, is_banned={bool(self.is_banned)}"

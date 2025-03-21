@@ -15,7 +15,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from custom_filters import *
+from custom_filters import Admin
 import models
 from common.keyboards import build_admin_keyboard, build_back_button
 from common.back_to_home_page import (
@@ -65,21 +65,48 @@ async def user_id_to_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYP
         else:
             user_id = int(update.effective_message.text)
 
-        user = models.User.get_users(user_id=user_id)
+        user = models.User.get_by(
+            conds={
+                "user_id": user_id,
+            },
+        )
         if not user:
-            await update.message.reply_text(
-                text="لم يتم العثور على المستخدم، تأكد من الآيدي ❌",
+            try:
+                user_chat = await context.bot.get_chat(chat_id=user_id)
+            except:
+                await update.message.reply_text(
+                    text=(
+                        "لم يتم العثور على المستخدم ❌\n"
+                        "تأكد من الآيدي أو من أن المستخدم قد بدأ محادثة مع البوت من قبل"
+                    ),
+                )
+                return
+            await models.User.add(
+                {
+                    "user_id": user_chat.id,
+                    "username": user_chat.username if user_chat.username else "",
+                    "name": user_chat.full_name,
+                }
             )
-            return
+            user = models.User.get_by(
+                conds={
+                    "user_id": user_id,
+                },
+            )
+
         if user.is_banned:
             ban_button = [
                 InlineKeyboardButton(
-                    text="فك الحظر 🔓", callback_data=f"unban {user.id}"
+                    text="فك الحظر 🔓",
+                    callback_data=f"unban {user.id}",
                 )
             ]
         else:
             ban_button = [
-                InlineKeyboardButton(text="حظر 🔒", callback_data=f"ban {user.id}")
+                InlineKeyboardButton(
+                    text="حظر 🔒",
+                    callback_data=f"ban {user.id}",
+                )
             ]
         keyboard = [
             ban_button,
@@ -87,11 +114,11 @@ async def user_id_to_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYP
             back_to_admin_home_page_button[0],
         ]
         await update.message.reply_text(
-            text="تم العثور على المستخدم ✅.",
+            text="تم العثور على المستخدم ✅",
             reply_markup=ReplyKeyboardRemove(),
         )
         await update.message.reply_text(
-            text="هل تريد.",
+            text="هل تريد",
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
         return BAN_UNBAN_USER
@@ -102,9 +129,12 @@ back_to_user_id_to_ban_unban = ban_unban
 
 async def ban_unban_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        await models.User.set_banned(
-            user_id=int(update.callback_query.data.split(" ")[-1]),
-            banned=True if update.callback_query.data.startswith("ban") else False,
+        await models.User.get_by(
+            conds={"id": int(update.callback_query.data.split(" ")[-1])},
+        ).update_one(
+            update_dict={
+                "is_banned": update.callback_query.data.startswith("ban"),
+            },
         )
 
         await update.callback_query.edit_message_text(

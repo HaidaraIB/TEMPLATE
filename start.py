@@ -1,4 +1,4 @@
-from telegram import Update, Chat, BotCommandScopeChat
+from telegram import Update, Chat, BotCommandScopeChat, Bot
 from telegram.ext import (
     CommandHandler,
     ContextTypes,
@@ -16,8 +16,18 @@ from common.keyboards import build_user_keyboard, build_admin_keyboard
 from common.common import check_hidden_keyboard
 from Config import Config
 
+
 async def inits(app: Application):
-    await models.Admin.add_new_admin(admin_id=Config.OWNER_ID)
+    bot: Bot = app.bot
+    owner = await bot.get_chat(chat_id=Config.OWNER_ID)
+    await models.User.add(
+        vals={
+            "user_id": owner.id,
+            "username": owner.username if owner.username else "",
+            "name": owner.full_name,
+            "is_admin": True,
+        },
+    )
 
 
 async def set_commands(update: Update, context: ContextTypes.DEFAULT_TYPE):

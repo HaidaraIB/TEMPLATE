@@ -61,13 +61,30 @@ async def choose_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=build_done_button(),
             )
             return ENTER_USERS
-        
+
         elif update.callback_query.data == "all users":
-            users = models.User.get_users()
+            users = models.User.get_by(
+                conds={
+                    "is_admin": False,
+                    "is_banned": False,
+                },
+                all=True,
+            )
         elif update.callback_query.data == "all admins":
-            users = models.Admin.get_admin_ids()
+            users = models.User.get_by(
+                conds={
+                    "is_admin": True,
+                    "is_banned": False,
+                },
+                all=True,
+            )
         elif update.callback_query.data == "everyone":
-            users = models.User.get_users() + models.Admin.get_admin_ids()
+            users = models.User.get_by(
+                conds={
+                    "is_banned": False,
+                },
+                all=True,
+            )
 
         asyncio.create_task(
             send_to(
