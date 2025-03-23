@@ -6,12 +6,9 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from common.keyboards import build_admin_keyboard
+from common.keyboards import build_admin_keyboard, build_back_to_home_page_button
 from admin.broadcast.common import build_broadcast_keyboard, send_to, build_done_button
-from common.back_to_home_page import (
-    back_to_admin_home_page_handler,
-    back_to_admin_home_page_button,
-)
+from common.back_to_home_page import back_to_admin_home_page_handler
 from start import start_command, admin_command
 import models
 import asyncio
@@ -28,7 +25,7 @@ async def broadcast_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
         await update.callback_query.edit_message_text(
             text="أرسل الرسالة",
-            reply_markup=InlineKeyboardMarkup(back_to_admin_home_page_button),
+            reply_markup=InlineKeyboardMarkup(build_back_to_home_page_button()),
         )
         return THE_MESSAGE
 
@@ -36,7 +33,7 @@ async def broadcast_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
         if update.message:
-            context.user_data["the message"] = update.message
+            context.user_data["the_message"] = update.message
             await update.message.reply_text(
                 text="هل تريد إرسال الرسالة إلى:",
                 reply_markup=build_broadcast_keyboard(),
@@ -54,15 +51,15 @@ back_to_the_message = broadcast_message
 
 async def choose_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        if update.callback_query.data == "specific users":
-            context.user_data["specific users"] = set()
+        if update.callback_query.data == "specific_users":
+            context.user_data["specific_users"] = set()
             await update.callback_query.edit_message_text(
                 text="قم بإرسال آيديات المستخدمين الذين تريد إرسال الرسالة لهم عند الانتهاء اضغط تم الانتهاء",
                 reply_markup=build_done_button(),
             )
             return ENTER_USERS
 
-        elif update.callback_query.data == "all users":
+        elif update.callback_query.data == "all_users":
             users = models.User.get_by(
                 conds={
                     "is_admin": False,
@@ -70,7 +67,7 @@ async def choose_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 },
                 all=True,
             )
-        elif update.callback_query.data == "all admins":
+        elif update.callback_query.data == "all_admins":
             users = models.User.get_by(
                 conds={
                     "is_admin": True,
@@ -120,7 +117,7 @@ async def enter_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             return
 
-        context.user_data["specific users"].add(user_id)
+        context.user_data["specific_users"].add(user_id)
         await update.message.reply_text(
             text="تم العثور على المستخدم ✅\n" + punch_line,
             reply_markup=build_done_button(),
@@ -135,7 +132,7 @@ async def done_entering_users(update: Update, context: ContextTypes.DEFAULT_TYPE
             reply_markup=build_admin_keyboard(),
         )
         asyncio.create_task(
-            send_to(users=context.user_data["specific users"], context=context)
+            send_to(users=context.user_data["specific_users"], context=context)
         )
         return ConversationHandler.END
 
@@ -162,13 +159,13 @@ broadcast_message_handler = ConversationHandler(
         SEND_TO: [
             CallbackQueryHandler(
                 callback=choose_users,
-                pattern="^((all)|(specific)) ((users)|(admins))$|^everyone$",
+                pattern="^((all)|(specific))_((users)|(admins))$|^everyone$",
             )
         ],
         ENTER_USERS: [
             CallbackQueryHandler(
                 done_entering_users,
-                "^done entering users$",
+                "^done_entering_users$",
             ),
             MessageHandler(
                 filters=filters.Regex("^\d+$"),
@@ -180,7 +177,7 @@ broadcast_message_handler = ConversationHandler(
         back_to_admin_home_page_handler,
         start_command,
         admin_command,
-        CallbackQueryHandler(back_to_the_message, "^back to the message$"),
-        CallbackQueryHandler(back_to_send_to, "^back to send to$"),
+        CallbackQueryHandler(back_to_the_message, "^back_to_the_message$"),
+        CallbackQueryHandler(back_to_send_to, "^back_to_send_to$"),
     ],
 )

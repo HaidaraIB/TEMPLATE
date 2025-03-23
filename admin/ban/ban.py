@@ -17,11 +17,8 @@ from telegram.ext import (
 )
 from custom_filters import Admin
 import models
-from common.keyboards import build_admin_keyboard, build_back_button
-from common.back_to_home_page import (
-    back_to_admin_home_page_button,
-    back_to_admin_home_page_handler,
-)
+from common.keyboards import build_admin_keyboard, build_back_button, build_back_to_home_page_button
+from common.back_to_home_page import back_to_admin_home_page_handler
 from start import admin_command
 
 (
@@ -65,6 +62,8 @@ async def user_id_to_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYP
         else:
             user_id = int(update.effective_message.text)
 
+        context.user_data["user_id_to_ban_unban"] = user_id
+
         user = models.User.get_by(
             conds={
                 "user_id": user_id,
@@ -98,20 +97,20 @@ async def user_id_to_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYP
             ban_button = [
                 InlineKeyboardButton(
                     text="فك الحظر 🔓",
-                    callback_data=f"unban {user.id}",
+                    callback_data=f"unban",
                 )
             ]
         else:
             ban_button = [
                 InlineKeyboardButton(
                     text="حظر 🔒",
-                    callback_data=f"ban {user.id}",
+                    callback_data=f"ban",
                 )
             ]
         keyboard = [
             ban_button,
-            build_back_button("back to user id to ban unban"),
-            back_to_admin_home_page_button[0],
+            build_back_button("back_to_user_id_to_ban_unban"),
+            build_back_to_home_page_button()[0],
         ]
         await update.message.reply_text(
             text="تم العثور على المستخدم ✅",
@@ -130,7 +129,7 @@ back_to_user_id_to_ban_unban = ban_unban
 async def ban_unban_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
         await models.User.get_by(
-            conds={"id": int(update.callback_query.data.split(" ")[-1])},
+            conds={"user_id": context.user_data["user_id_to_ban_unban"]},
         ).update_one(
             update_dict={
                 "is_banned": update.callback_query.data.startswith("ban"),
@@ -148,7 +147,7 @@ ban_unban_user_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
             ban_unban,
-            "^ban unban$",
+            "^ban_unban$",
         ),
     ],
     states={
@@ -165,14 +164,14 @@ ban_unban_user_handler = ConversationHandler(
         BAN_UNBAN_USER: [
             CallbackQueryHandler(
                 ban_unban_user,
-                "^((ban)|(unban)) \d+$",
+                "^((ban)|(unban))$",
             ),
         ],
     },
     fallbacks=[
         CallbackQueryHandler(
             back_to_user_id_to_ban_unban,
-            "^back to user id to ban unban$",
+            "^back_to_user_id_to_ban_unban$",
         ),
         admin_command,
         back_to_admin_home_page_handler,

@@ -10,6 +10,7 @@ from common.error_handler import error_handler
 from common.force_join import check_joined_handler
 
 from user.user_calls import *
+from user.user_settings import *
 
 from admin.admin_calls import *
 from admin.admin_settings import *
@@ -32,6 +33,10 @@ def main():
             callback=invalid_callback_data, pattern=InvalidCallbackData
         )
     )
+
+    app.add_handler(user_settings_handler)
+    app.add_handler(change_lang_handler)
+
     # ADMIN SETTINGS
     app.add_handler(admin_settings_handler)
     app.add_handler(show_admins_handler)

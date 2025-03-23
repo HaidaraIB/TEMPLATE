@@ -7,13 +7,14 @@ import asyncio
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models import *
+from common.common import get_lang
 
 
 async def main():
     load_dotenv()
     create_tables()
-    admin = User.get_by(conds={"id": 3})
-    await admin.delete_one()
+    l = get_lang(755501092)
+    print(l)
 
 
 asyncio.run(main())

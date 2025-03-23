@@ -7,17 +7,17 @@ def build_admin_settings_keyboard():
         [
             InlineKeyboardButton(
                 text="إضافة آدمن ➕",
-                callback_data="add admin",
+                callback_data="add_admin",
             ),
             InlineKeyboardButton(
                 text="حذف آدمن ✖️",
-                callback_data="remove admin",
+                callback_data="remove_admin",
             ),
         ],
         [
             InlineKeyboardButton(
                 text="عرض الآدمنز الحاليين 👓",
-                callback_data="show admins",
+                callback_data="show_admins",
             )
         ],
     ]

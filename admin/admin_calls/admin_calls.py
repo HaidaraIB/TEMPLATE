@@ -1,8 +1,8 @@
 from telegram import Chat, Update, ReplyKeyboardRemove, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackQueryHandler, MessageHandler, filters
 from common.keyboards import build_admin_keyboard, build_request_buttons
-from common.back_to_home_page import *
 from custom_filters import Admin
+from common.constants import *
 
 
 async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -52,7 +52,7 @@ async def hide_ids_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 hide_ids_keyboard_handler = CallbackQueryHandler(
-    callback=hide_ids_keyboard, pattern="^hide ids keyboard$"
+    callback=hide_ids_keyboard, pattern="^hide_ids_keyboard$"
 )
 
 find_id_handler = MessageHandler(

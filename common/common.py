@@ -6,6 +6,7 @@ from common.keyboards import build_request_buttons
 from Config import Config
 import logging
 import os
+import models
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -39,3 +40,7 @@ def create_folders():
 async def invalid_callback_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == ChatType.PRIVATE:
         await update.callback_query.answer("انتهت صلاحية هذا الزر")
+
+
+def get_lang(user_id: int):
+    return models.User.get_by(conds={"user_id": user_id}).lang.name

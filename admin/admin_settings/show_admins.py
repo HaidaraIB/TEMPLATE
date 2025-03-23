@@ -25,5 +25,5 @@ async def show_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 show_admins_handler = CallbackQueryHandler(
     callback=show_admins,
-    pattern="^show admins$",
+    pattern="^show_admins$",
 )

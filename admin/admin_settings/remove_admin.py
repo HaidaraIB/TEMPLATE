@@ -1,11 +1,8 @@
 from telegram import Chat, Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackQueryHandler, ConversationHandler
 from start import admin_command
-from common.keyboards import build_back_button
-from common.back_to_home_page import (
-    back_to_admin_home_page_button,
-    back_to_admin_home_page_handler,
-)
+from common.keyboards import build_back_button, build_back_to_home_page_button
+from common.back_to_home_page import back_to_admin_home_page_handler
 from admin.admin_settings.admin_settings import admin_settings_handler
 import os
 from custom_filters import Admin
@@ -51,7 +48,7 @@ async def remove_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
             for admin in admins
         ]
         admin_ids_keyboard.append(build_back_button("back_to_admin_settings"))
-        admin_ids_keyboard.append(back_to_admin_home_page_button[0])
+        admin_ids_keyboard.append(build_back_to_home_page_button()[0])
         await update.callback_query.edit_message_text(
             text="اختر من القائمة أدناه الآدمن الذي تريد إزالته.",
             reply_markup=InlineKeyboardMarkup(admin_ids_keyboard),
@@ -63,7 +60,7 @@ remove_admin_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
             callback=remove_admin,
-            pattern="^remove admin$",
+            pattern="^remove_admin$",
         ),
     ],
     states={

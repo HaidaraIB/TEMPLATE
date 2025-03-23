@@ -13,7 +13,8 @@ from common.decorators import (
     check_if_user_member_decorator,
 )
 from common.keyboards import build_user_keyboard, build_admin_keyboard
-from common.common import check_hidden_keyboard
+from common.common import check_hidden_keyboard, get_lang
+from common.lang_dicts import TEXTS
 from Config import Config
 
 
@@ -46,9 +47,10 @@ async def set_commands(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE:
         await set_commands(update, context)
+        lang = get_lang(update.effective_user.id)
         await update.message.reply_text(
-            text="أهلاً بك...",
-            reply_markup=build_user_keyboard(),
+            text=TEXTS[lang]["welcome_msg"],
+            reply_markup=build_user_keyboard(lang),
         )
         return ConversationHandler.END
 

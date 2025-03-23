@@ -1,6 +1,6 @@
 import sqlalchemy as sa
 from models.BaseModel import BaseModel
-
+from models.Language import Language
 
 class User(BaseModel):
     __tablename__ = "users"
@@ -8,6 +8,7 @@ class User(BaseModel):
     user_id = sa.Column(sa.BigInteger, unique=True)
     username = sa.Column(sa.String)
     name = sa.Column(sa.String)
+    lang = sa.Column(sa.Enum(Language), default=Language.ARABIC)
     is_banned = sa.Column(sa.Boolean, default=0)
     is_admin = sa.Column(sa.Boolean, default=0)
 

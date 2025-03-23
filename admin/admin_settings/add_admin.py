@@ -93,7 +93,7 @@ add_admin_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
             callback=add_admin,
-            pattern="^add admin$",
+            pattern="^add_admin$",
         ),
     ],
     states={
