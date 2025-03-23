@@ -1,6 +1,5 @@
 import sqlalchemy as sa
 from models.BaseModel import BaseModel
-from enum import Enum
 
 
 class User(BaseModel):

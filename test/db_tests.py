@@ -12,8 +12,7 @@ from models import *
 async def main():
     load_dotenv()
     create_tables()
-    admins = User.get_by(attr="is_admin", val=True, all=True)
-    print(admins)
+    await User.update(row_id=3, update_dict={"is_admin": 1})
 
 
 asyncio.run(main())

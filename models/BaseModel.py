@@ -16,14 +16,7 @@ class BaseModel(Base):
     @classmethod
     @lock_and_release
     async def update(cls, row_id: int, update_dict: dict, s: Session = None):
-        s.query(cls).filter_by(id=row_id).update(
-            dict(
-                zip(
-                    [getattr(cls, attr) for attr in update_dict.keys()],
-                    update_dict.values(),
-                )
-            ),
-        )
+        s.query(cls).filter_by(id=row_id).update(update_dict)
 
     @lock_and_release
     async def update_one(self, update_dict: dict, s: Session = None):
