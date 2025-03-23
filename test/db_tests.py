@@ -12,7 +12,8 @@ from models import *
 async def main():
     load_dotenv()
     create_tables()
-    await User.update(row_id=3, update_dict={"is_admin": 1})
+    admin = User.get_by(conds={"id": 3})
+    await admin.delete_one()
 
 
 asyncio.run(main())

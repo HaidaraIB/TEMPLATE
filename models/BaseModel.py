@@ -27,6 +27,10 @@ class BaseModel(Base):
     async def delete(cls, attr, val, s: Session = None):
         s.query(cls).filter(getattr(cls, attr) == val).delete()
 
+    @lock_and_release
+    async def delete_one(self, s: Session = None):
+        s.query(type(self)).filter_by(id=self.id).delete()
+
     @classmethod
     @connect_and_close
     def get_by(cls, conds: dict = None, all: bool = False, s: Session = None):
