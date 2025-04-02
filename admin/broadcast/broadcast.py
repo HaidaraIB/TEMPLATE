@@ -6,8 +6,12 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from common.keyboards import build_admin_keyboard, build_back_to_home_page_button
-from admin.broadcast.common import build_broadcast_keyboard, send_to, build_done_button
+from common.keyboards import (
+    build_admin_keyboard,
+    build_back_to_home_page_button,
+    build_back_button,
+)
+from admin.broadcast.common import build_broadcast_keyboard, send_to
 from common.back_to_home_page import back_to_admin_home_page_handler
 from start import start_command, admin_command
 import models
@@ -17,7 +21,7 @@ from custom_filters import Admin
 (
     THE_MESSAGE,
     SEND_TO,
-    ENTER_USERS,
+    USERS,
 ) = range(3)
 
 
@@ -52,12 +56,15 @@ back_to_the_message = broadcast_message
 async def choose_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
         if update.callback_query.data == "specific_users":
-            context.user_data["specific_users"] = set()
+            back_buttons = [
+                build_back_button("back_to_send_to"),
+                build_back_to_home_page_button()[0],
+            ]
             await update.callback_query.edit_message_text(
-                text="قم بإرسال آيديات المستخدمين الذين تريد إرسال الرسالة لهم عند الانتهاء اضغط تم الانتهاء",
-                reply_markup=build_done_button(),
+                text="قم بإرسال آيديات المستخدمين الذين تريد إرسال الرسالة لهم سطراً سطراً.",
+                reply_markup=InlineKeyboardMarkup(back_buttons),
             )
-            return ENTER_USERS
+            return USERS
 
         elif update.callback_query.data == "all_users":
             users = models.User.get_by(
@@ -100,39 +107,13 @@ async def choose_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 back_to_send_to = get_message
 
 
-async def enter_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def get_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        user_id = int(update.message.text)
-        punch_line = "تابع مع باقي الآيديات واضغط تم الانتهاء عند الانتهاء"
-
-        try:
-            await context.bot.get_chat(chat_id=user_id)
-        except error.TelegramError:
-            await update.message.reply_text(
-                text=(
-                    "لم يتم العثور على المستخدم، ربما لم يبدأ محادثة مع البوت بعد ❗️\n"
-                    + punch_line
-                ),
-                reply_markup=build_done_button(),
-            )
-            return
-
-        context.user_data["specific_users"].add(user_id)
+        users = set(map(int, update.message.text.split("\n")))
+        asyncio.create_task(send_to(users=users, context=context))
         await update.message.reply_text(
-            text="تم العثور على المستخدم ✅\n" + punch_line,
-            reply_markup=build_done_button(),
-        )
-        return ENTER_USERS
-
-
-async def done_entering_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        await update.callback_query.edit_message_text(
-            text="يقوم البوت بإرسال الرسائل الآن، يمكنك متابعة استخدامه بشكل طبيعي",
+            text="يقوم البوت بإرسال الرسائل الآن، يمكنك متابعة استخدامه بشكل طبيعي.",
             reply_markup=build_admin_keyboard(),
-        )
-        asyncio.create_task(
-            send_to(users=context.user_data["specific_users"], context=context)
         )
         return ConversationHandler.END
 
@@ -162,14 +143,10 @@ broadcast_message_handler = ConversationHandler(
                 pattern="^((all)|(specific))_((users)|(admins))$|^everyone$",
             )
         ],
-        ENTER_USERS: [
-            CallbackQueryHandler(
-                done_entering_users,
-                "^done_entering_users$",
-            ),
+        USERS: [
             MessageHandler(
-                filters=filters.Regex("^\d+$"),
-                callback=enter_users,
+                filters=filters.Regex(r"^-?[0-9]+(?:\n-?[0-9]+)*$"),
+                callback=get_users,
             ),
         ],
     },

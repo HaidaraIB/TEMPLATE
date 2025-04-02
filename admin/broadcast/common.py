@@ -62,17 +62,3 @@ async def send_to(users: list[models.User], context: ContextTypes.DEFAULT_TYPE):
                 await context.bot.send_message(chat_id=chat_id, text=msg.text)
         except:
             continue
-
-
-def build_done_button():
-    done_button = [
-        [
-            InlineKeyboardButton(
-                text="تم الانتهاء 👍",
-                callback_data="done_entering_users",
-            )
-        ],
-        build_back_button("back_to_send_to"),
-        build_back_to_home_page_button()[0],
-    ]
-    return InlineKeyboardMarkup(done_button)
