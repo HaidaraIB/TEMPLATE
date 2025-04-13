@@ -1,7 +1,7 @@
 from models.Language import Language
 
 TEXTS = {
-    Language.ARABIC.name: {
+    Language.ARABIC: {
         "welcome_msg": "أهلاً بك...",
         "force_join_msg": (
             f"لبدء استخدام البوت يجب عليك الانضمام الى قناة البوت أولاً\n\n"
@@ -14,7 +14,7 @@ TEXTS = {
         "change_lang_success": "تم تغيير اللغة بنجاح ✅",
         "home_page": "القائمة الرئيسية 🔝",
     },
-    Language.ENGLISH.name: {
+    Language.ENGLISH: {
         "welcome_msg": "Welcome...",
         "force_join_msg": (
             f"You have to join the bot's channel in order to be able to use it\n\n"
@@ -30,7 +30,7 @@ TEXTS = {
 }
 
 BUTTONS = {
-    Language.ARABIC.name: {
+    Language.ARABIC: {
         "check_joined": "تحقق ✅",
         "bot_channel": "قناة البوت 📢",
         "back_button": "الرجوع 🔙",
@@ -39,7 +39,7 @@ BUTTONS = {
         "back_to_home_page": "العودة إلى القائمة الرئيسية 🔙",
         
     },
-    Language.ENGLISH.name: {
+    Language.ENGLISH: {
         "check_joined": "Verify ✅",
         "bot_channel": "Bot's Channel 📢",
         "back_button": "Back 🔙",

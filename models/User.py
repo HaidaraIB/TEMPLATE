@@ -1,11 +1,12 @@
 import sqlalchemy as sa
-from models.BaseModel import BaseModel
+from models.DB import Base
 from models.Language import Language
 
-class User(BaseModel):
+
+class User(Base):
     __tablename__ = "users"
 
-    user_id = sa.Column(sa.BigInteger, unique=True)
+    user_id = sa.Column(sa.BigInteger, primary_key=True)
     username = sa.Column(sa.String)
     name = sa.Column(sa.String)
     lang = sa.Column(sa.Enum(Language), default=Language.ARABIC)

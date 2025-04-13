@@ -20,15 +20,18 @@ from Config import Config
 
 async def inits(app: Application):
     bot: Bot = app.bot
-    owner = await bot.get_chat(chat_id=Config.OWNER_ID)
-    await models.User.add(
-        vals={
-            "user_id": owner.id,
-            "username": owner.username if owner.username else "",
-            "name": owner.full_name,
-            "is_admin": True,
-        },
-    )
+    tg_owner = await bot.get_chat(chat_id=Config.OWNER_ID)
+    with models.session_scope() as s:
+        owner = s.get(models.User, tg_owner.id)
+        if not owner:
+            s.add(
+                models.User(
+                    user_id=tg_owner.id,
+                    username=tg_owner.username if tg_owner.username else "",
+                    name=tg_owner.full_name,
+                    is_admin=True,
+                )
+            )
 
 
 async def set_commands(update: Update, context: ContextTypes.DEFAULT_TYPE):

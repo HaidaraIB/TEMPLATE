@@ -17,14 +17,14 @@ from admin.admin_settings import *
 from admin.broadcast import *
 from admin.ban import *
 
-from models import create_tables
+from models import init_db
 
 from MyApp import MyApp
 
 
 def main():
     create_folders()
-    create_tables()
+    init_db()
 
     app = MyApp.build_app()
 
@@ -38,10 +38,10 @@ def main():
     app.add_handler(change_lang_handler)
 
     # ADMIN SETTINGS
-    app.add_handler(admin_settings_handler)
     app.add_handler(show_admins_handler)
     app.add_handler(add_admin_handler)
     app.add_handler(remove_admin_handler)
+    app.add_handler(admin_settings_handler)
 
     app.add_handler(broadcast_message_handler)
 

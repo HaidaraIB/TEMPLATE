@@ -52,7 +52,7 @@ def build_admin_keyboard():
 
 
 def build_back_to_home_page_button(
-    lang: str = models.Language.ARABIC.name, is_admin: bool = True
+    lang: str = models.Language.ARABIC, is_admin: bool = True
 ):
     button = [
         [
@@ -65,7 +65,7 @@ def build_back_to_home_page_button(
     return button
 
 
-def build_back_button(data: str, lang: str = models.Language.ARABIC.name):
+def build_back_button(data: str, lang: str = models.Language.ARABIC):
     return [
         InlineKeyboardButton(
             text=BUTTONS[lang]["back_button"],

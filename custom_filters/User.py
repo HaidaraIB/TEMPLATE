@@ -5,8 +5,8 @@ import models
 
 class User(UpdateFilter):
     def filter(self, update: Update):
-        return not models.User.get_by(
-            conds={
-                "user_id": update.effective_user.id,
-            }
-        ).is_admin
+        with models.session_scope() as s:
+            return not s.get(
+                models.User,
+                update.effective_user.id,
+            ).is_admin

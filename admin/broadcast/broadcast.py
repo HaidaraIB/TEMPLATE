@@ -65,37 +65,36 @@ async def choose_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=InlineKeyboardMarkup(back_buttons),
             )
             return USERS
-
-        elif update.callback_query.data == "all_users":
-            users = models.User.get_by(
-                conds={
-                    "is_admin": False,
-                    "is_banned": False,
-                },
-                all=True,
+        with models.session_scope() as s:
+            if update.callback_query.data == "all_users":
+                users = (
+                    s.query(models.User)
+                    .filter(
+                        models.User.is_admin == False, models.User.is_banned == False
+                    )
+                    .all()
+                )
+            elif update.callback_query.data == "all_admins":
+                users = (
+                    s.query(models.User)
+                    .filter(
+                        models.User.is_admin == True, models.User.is_banned == False
+                    )
+                    .all()
+                )
+            elif update.callback_query.data == "everyone":
+                users = (
+                    s.query(models.User).filter(models.User.is_banned == False).all()
+                )
+            
+            users = [user.user_id for user in users]
+            
+            asyncio.create_task(
+                send_to(
+                    users=users,
+                    context=context,
+                )
             )
-        elif update.callback_query.data == "all_admins":
-            users = models.User.get_by(
-                conds={
-                    "is_admin": True,
-                    "is_banned": False,
-                },
-                all=True,
-            )
-        elif update.callback_query.data == "everyone":
-            users = models.User.get_by(
-                conds={
-                    "is_banned": False,
-                },
-                all=True,
-            )
-
-        asyncio.create_task(
-            send_to(
-                users=users,
-                context=context,
-            )
-        )
         await update.callback_query.edit_message_text(
             text="يقوم البوت بإرسال الرسائل الآن، يمكنك متابعة استخدامه بشكل طبيعي",
             reply_markup=build_admin_keyboard(),

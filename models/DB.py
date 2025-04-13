@@ -1,44 +1,59 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, Session
-import traceback
-from asyncio import Lock
 from models import *
 from Config import Config
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.ext.declarative import declarative_base
+from contextlib import contextmanager
+import logging
 
-lock = Lock()
+
+logger = logging.getLogger(__name__)
+
 Base = declarative_base()
-engine = create_engine(f"sqlite:///{Config.DB_PATH}")
+engine = create_engine(
+    f"sqlite:///{Config.DB_PATH}",
+    connect_args={"check_same_thread": False},
+    pool_size=Config.DB_POOL_SIZE,
+    max_overflow=Config.DB_MAX_OVERFLOW,
+    pool_pre_ping=True,
+)
 
 
-def create_tables():
+def init_db():
+    # Configure SQLite for better concurrency
+    with engine.connect() as conn:
+        conn.execute(text("PRAGMA journal_mode=WAL"))
+        conn.execute(text("PRAGMA synchronous=NORMAL"))
+        conn.execute(text("PRAGMA foreign_keys=ON"))
+        conn.execute(text("PRAGMA busy_timeout=5000"))
+
     Base.metadata.create_all(engine)
 
 
-def lock_and_release(func):
-    async def wrapper(*args, **kwargs):
-        try:
-            await lock.acquire()
-            s = Session(bind=engine, autoflush=True)
-            result = await func(*args, **kwargs, s=s)
-            s.commit()
-            if result:
-                return result
-        except Exception as e:
-            print(e)
-            with open("errors.txt", "a", encoding="utf-8") as f:
-                f.write(f"{traceback.format_exc()}\n{'-'*100}\n\n\n")
-        finally:
-            s.close()
-            lock.release()
-
-    return wrapper
+Session = scoped_session(sessionmaker(bind=engine, autocommit=False, autoflush=False))
 
 
-def connect_and_close(func):
-    def wrapper(*args, **kwargs):
-        s = Session(bind=engine, autoflush=True)
-        result = func(*args, **kwargs, s=s)
-        s.close()
-        return result
+@contextmanager
+def session_scope():
+    """Provide a transactional scope around a series of database operations.
 
-    return wrapper
+    Yields:
+        Session: A SQLAlchemy database session
+
+    Raises:
+        Exception: Any exception that occurs during the transaction will be
+                  logged and re-raised after rolling back the transaction.
+    """
+    session = Session()
+    try:
+        yield session
+        session.commit()
+        logger.debug("Transaction committed successfully")
+    except Exception as e:
+        session.rollback()
+        logger.error(
+            "Database transaction failed", exc_info=True, extra={"exception": str(e)}
+        )
+    finally:
+        session.close()
+        logger.debug("Session closed")

@@ -12,7 +12,7 @@ from common.common import get_lang
 
 async def main():
     load_dotenv()
-    create_tables()
+    init_db()
     l = get_lang(755501092)
     print(l)
 

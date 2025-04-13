@@ -15,38 +15,35 @@ CHOOSE_ADMIN_ID_TO_REMOVE = 0
 
 async def remove_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        if update.callback_query.data.isnumeric():
+        with models.session_scope() as s:
 
-            admin = models.User.get_by(
-                conds={
-                    "id": int(update.callback_query.data),
-                },
-            )
+            if update.callback_query.data.isnumeric():
+                admin = s.get(models.User, int(update.callback_query.data))
 
-            if admin.user_id == int(os.getenv("OWNER_ID")):
+                if admin.user_id == int(os.getenv("OWNER_ID")):
+                    await update.callback_query.answer(
+                        text="لا يمكنك إزالة مالك البوت من قائمة الآدمنز ❗️",
+                        show_alert=True,
+                    )
+                    return
+                admin.is_admin = False
+                s.commit()
                 await update.callback_query.answer(
-                    text="لا يمكنك إزالة مالك البوت من قائمة الآدمنز ❗️",
+                    text="تمت إزالة الآدمن بنجاح ✅",
                     show_alert=True,
                 )
-                return
 
-            await admin.update_one(update_dict={"is_admin": False})
-            await update.callback_query.answer(
-                text="تمت إزالة الآدمن بنجاح ✅",
-                show_alert=True,
-            )
-
-        await update.callback_query.answer()
-        admins = models.User.get_by(conds={"is_admin": True}, all=True)
-        admin_ids_keyboard = [
-            [
-                InlineKeyboardButton(
-                    text=admin.name,
-                    callback_data=str(admin.id),
-                ),
+            await update.callback_query.answer()
+            admins = s.query(models.User).filter(models.User.is_admin == True).all()
+            admin_ids_keyboard = [
+                [
+                    InlineKeyboardButton(
+                        text=admin.name,
+                        callback_data=str(admin.user_id),
+                    ),
+                ]
+                for admin in admins
             ]
-            for admin in admins
-        ]
         admin_ids_keyboard.append(build_back_button("back_to_admin_settings"))
         admin_ids_keyboard.append(build_back_to_home_page_button()[0])
         await update.callback_query.edit_message_text(

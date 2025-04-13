@@ -32,7 +32,7 @@ def build_broadcast_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 
-async def send_to(users: list[models.User], context: ContextTypes.DEFAULT_TYPE):
+async def send_to(users: list[int], context: ContextTypes.DEFAULT_TYPE):
     msg: Message = context.user_data["the_message"]
     media_types = {
         "photo": msg.photo[-1] if msg.photo else None,
@@ -49,16 +49,15 @@ async def send_to(users: list[models.User], context: ContextTypes.DEFAULT_TYPE):
             break
 
     for user in users:
-        chat_id = user.user_id if isinstance(user, models.User) else user
         try:
             if media:
                 send_func = getattr(context.bot, f"send_{media_type}")
                 await send_func(
-                    chat_id=chat_id,
+                    chat_id=user,
                     caption=msg.caption,
                     **{media_type: media},
                 )
             else:
-                await context.bot.send_message(chat_id=chat_id, text=msg.text)
+                await context.bot.send_message(chat_id=user, text=msg.text)
         except:
             continue

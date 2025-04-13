@@ -59,24 +59,20 @@ async def new_admin_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             admin_id = int(update.message.text)
 
-        admin = models.User.get_by(
-            conds={
-                "user_id": admin_id,
-            },
-        )
+        with models.session_scope() as s:
+            admin = s.get(models.User, admin_id)
 
-        if not admin:
-            admin_chat = await context.bot.get_chat(chat_id=admin_id)
-            await models.User.add(
-                {
-                    "user_id": admin_chat.id,
-                    "username": admin_chat.username if admin_chat.username else "",
-                    "name": admin_chat.full_name,
-                    "is_admin": True,
-                }
-            )
-        else:
-            await admin.update_one(update_dict={"is_admin": True})
+            if not admin:
+                admin_chat = await context.bot.get_chat(chat_id=admin_id)
+                admin = models.User(
+                    user_id=admin_chat.id,
+                    username=admin_chat.username if admin_chat.username else "",
+                    name=admin_chat.full_name,
+                    is_admin=True,
+                )
+                s.add(admin)
+            else:
+                admin.is_admin = True
 
         await update.message.reply_text(
             text="تمت إضافة الآدمن بنجاح ✅",

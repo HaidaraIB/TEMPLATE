@@ -17,7 +17,11 @@ from telegram.ext import (
 )
 from custom_filters import Admin
 import models
-from common.keyboards import build_admin_keyboard, build_back_button, build_back_to_home_page_button
+from common.keyboards import (
+    build_admin_keyboard,
+    build_back_button,
+    build_back_to_home_page_button,
+)
 from common.back_to_home_page import back_to_admin_home_page_handler
 from start import admin_command
 
@@ -63,50 +67,40 @@ async def user_id_to_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYP
             user_id = int(update.effective_message.text)
 
         context.user_data["user_id_to_ban_unban"] = user_id
+        with models.session_scope() as s:
+            user = s.get(models.User, user_id)
+            if not user:
+                try:
+                    user_chat = await context.bot.get_chat(chat_id=user_id)
+                except:
+                    await update.message.reply_text(
+                        text=(
+                            "لم يتم العثور على المستخدم ❌\n"
+                            "تأكد من الآيدي أو من أن المستخدم قد بدأ محادثة مع البوت من قبل"
+                        ),
+                    )
+                    return
+                user = models.User(
+                    user_id=user_chat.id,
+                    username=user_chat.username if user_chat.username else "",
+                    name=user_chat.full_name,
+                )
+                s.add(user)
 
-        user = models.User.get_by(
-            conds={
-                "user_id": user_id,
-            },
-        )
-        if not user:
-            try:
-                user_chat = await context.bot.get_chat(chat_id=user_id)
-            except:
-                await update.message.reply_text(
-                    text=(
-                        "لم يتم العثور على المستخدم ❌\n"
-                        "تأكد من الآيدي أو من أن المستخدم قد بدأ محادثة مع البوت من قبل"
-                    ),
-                )
-                return
-            await models.User.add(
-                {
-                    "user_id": user_chat.id,
-                    "username": user_chat.username if user_chat.username else "",
-                    "name": user_chat.full_name,
-                }
-            )
-            user = models.User.get_by(
-                conds={
-                    "user_id": user_id,
-                },
-            )
-
-        if user.is_banned:
-            ban_button = [
-                InlineKeyboardButton(
-                    text="فك الحظر 🔓",
-                    callback_data=f"unban",
-                )
-            ]
-        else:
-            ban_button = [
-                InlineKeyboardButton(
-                    text="حظر 🔒",
-                    callback_data=f"ban",
-                )
-            ]
+            if user.is_banned:
+                ban_button = [
+                    InlineKeyboardButton(
+                        text="فك الحظر 🔓",
+                        callback_data=f"unban",
+                    )
+                ]
+            else:
+                ban_button = [
+                    InlineKeyboardButton(
+                        text="حظر 🔒",
+                        callback_data=f"ban",
+                    )
+                ]
         keyboard = [
             ban_button,
             build_back_button("back_to_user_id_to_ban_unban"),
@@ -128,13 +122,12 @@ back_to_user_id_to_ban_unban = ban_unban
 
 async def ban_unban_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
-        await models.User.get_by(
-            conds={"user_id": context.user_data["user_id_to_ban_unban"]},
-        ).update_one(
-            update_dict={
-                "is_banned": update.callback_query.data.startswith("ban"),
-            },
-        )
+        with models.session_scope() as s:
+            s.query(models.User).filter(
+                models.User.user_id == context.user_data["user_id_to_ban_unban"]
+            ).update(
+                {models.User.is_banned: update.callback_query.data.startswith("ban")}
+            )
 
         await update.callback_query.edit_message_text(
             text="تمت العملية بنجاح ✅",

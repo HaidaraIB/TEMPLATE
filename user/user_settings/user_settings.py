@@ -25,9 +25,10 @@ async def user_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def change_lang(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == Chat.PRIVATE:
         if update.callback_query.data in models.Language._member_names_:
-            lang = update.callback_query.data
-            user = models.User.get_by({"user_id": update.effective_user.id})
-            await user.update_one({"lang": lang})
+            lang = models.Language[update.callback_query.data]
+            with models.session_scope() as s:
+                user = s.get(models.User, update.effective_user.id)
+                user.lang = lang
             await update.callback_query.answer(
                 text=TEXTS[lang]["change_lang_success"],
                 show_alert=True,

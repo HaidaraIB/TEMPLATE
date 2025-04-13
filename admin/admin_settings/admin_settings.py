@@ -1,5 +1,5 @@
 from telegram import Chat, Update, InlineKeyboardMarkup
-from telegram.ext import ContextTypes, CallbackQueryHandler
+from telegram.ext import ContextTypes, CallbackQueryHandler, ConversationHandler
 from common.keyboards import build_back_to_home_page_button
 from admin.admin_settings.common import build_admin_settings_keyboard
 from custom_filters import Admin
@@ -13,6 +13,7 @@ async def admin_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
             text="إعدادات الآدمن 🪄",
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
+        return ConversationHandler.END
 
 
 admin_settings_handler = CallbackQueryHandler(

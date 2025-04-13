@@ -43,4 +43,5 @@ async def invalid_callback_data(update: Update, context: ContextTypes.DEFAULT_TY
 
 
 def get_lang(user_id: int):
-    return models.User.get_by(conds={"user_id": user_id}).lang.name
+    with models.session_scope() as s:
+        return s.get(models.User, user_id).lang

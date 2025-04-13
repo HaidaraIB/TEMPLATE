@@ -10,13 +10,10 @@ def check_if_user_banned_dec(func):
     async def wrapper(
         update: Update, context: ContextTypes.DEFAULT_TYPE, *args, **kwargs
     ):
-        user = models.User.get_by(
-            conds={
-                "user_id": update.effective_user.id,
-            },
-        )
-        if user.is_banned:
-            return
+        with models.session_scope() as s:
+            user = s.get(models.User, update.effective_user.id)
+            if user.is_banned:
+                return
         return await func(update, context, *args, **kwargs)
 
     return wrapper
@@ -27,20 +24,16 @@ def add_new_user_dec(func):
     async def wrapper(
         update: Update, context: ContextTypes.DEFAULT_TYPE, *args, **kwargs
     ):
-        old_user = models.User.get_by(
-            conds={
-                "user_id": update.effective_user.id,
-            },
-        )
-        if not old_user:
-            new_user = update.effective_user
-            await models.User.add(
-                vals={
-                    "user_id": new_user.id,
-                    "username": new_user.username if new_user.username else "",
-                    "name": new_user.full_name,
-                },
-            )
+        with models.session_scope() as s:
+            user = s.get(models.User, update.effective_user.id)
+            if not user:
+                tg_user = update.effective_user
+                user = models.User(
+                    user_id=tg_user.id,
+                    username=tg_user.username if tg_user.username else "",
+                    name=tg_user.full_name,
+                )
+                s.add(user)
         return await func(update, context, *args, **kwargs)
 
     return wrapper
