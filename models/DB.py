@@ -3,11 +3,13 @@ from Config import Config
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import OperationalError
 from contextlib import contextmanager
+from functools import wraps
 import logging
-
-
-logger = logging.getLogger(__name__)
+import asyncio
+import traceback
+from common.error_handler import write_error
 
 Base = declarative_base()
 engine = create_engine(
@@ -44,6 +46,8 @@ def session_scope():
         Exception: Any exception that occurs during the transaction will be
                   logged and re-raised after rolling back the transaction.
     """
+    logger = logging.getLogger(__name__)
+
     session = Session()
     try:
         yield session
@@ -52,8 +56,32 @@ def session_scope():
     except Exception as e:
         session.rollback()
         logger.error(
-            "Database transaction failed", exc_info=True, extra={"exception": str(e)}
+            "Database transaction failed",
+            exc_info=True,
+            extra={"exception": str(e)},
         )
+        write_error(traceback.format_exc())
     finally:
         session.close()
         logger.debug("Session closed")
+
+
+def with_retry(max_retries=3, delay=1):
+    def decorator(func):
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            retries = 0
+            while retries < max_retries:
+                try:
+                    return await func(*args, **kwargs)
+                except OperationalError as e:
+                    if "database is locked" in str(e):
+                        retries += 1
+                        await asyncio.sleep(delay * retries)
+                        continue
+                    raise
+            raise OperationalError("Max retries reached", None, None)
+
+        return async_wrapper
+
+    return decorator

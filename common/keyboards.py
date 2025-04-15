@@ -9,7 +9,7 @@ from common.lang_dicts import *
 import models
 
 
-def build_user_keyboard(lang: str):
+def build_user_keyboard(lang: Language):
     keyboard = [
         [
             InlineKeyboardButton(
@@ -52,7 +52,7 @@ def build_admin_keyboard():
 
 
 def build_back_to_home_page_button(
-    lang: str = models.Language.ARABIC, is_admin: bool = True
+    lang: Language = models.Language.ARABIC, is_admin: bool = True
 ):
     button = [
         [
@@ -65,7 +65,7 @@ def build_back_to_home_page_button(
     return button
 
 
-def build_back_button(data: str, lang: str = models.Language.ARABIC):
+def build_back_button(data: str, lang: Language = models.Language.ARABIC):
     return [
         InlineKeyboardButton(
             text=BUTTONS[lang]["back_button"],

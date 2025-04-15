@@ -1,7 +1,6 @@
 from telegram import Update
-from telegram.ext import CallbackQueryHandler, InvalidCallbackData
 from start import start_command, admin_command
-from common.common import invalid_callback_data, create_folders
+from common.common import create_folders
 from common.back_to_home_page import (
     back_to_admin_home_page_handler,
     back_to_user_home_page_handler,
@@ -22,17 +21,12 @@ from models import init_db
 from MyApp import MyApp
 
 
-def main():
+def setup_and_run():
     create_folders()
     init_db()
 
     app = MyApp.build_app()
 
-    app.add_handler(
-        CallbackQueryHandler(
-            callback=invalid_callback_data, pattern=InvalidCallbackData
-        )
-    )
 
     app.add_handler(user_settings_handler)
     app.add_handler(change_lang_handler)

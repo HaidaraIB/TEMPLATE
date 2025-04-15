@@ -1,19 +1,9 @@
-from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ContextTypes
-from telegram.constants import ChatType
-import uuid
 from common.keyboards import build_request_buttons
-from Config import Config
-import logging
 import os
 import models
-
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO,
-)
-if Config.OWNER_ID != 755501092:
-    logging.getLogger("httpx").setLevel(logging.WARNING)
+import uuid
 
 
 def check_hidden_keyboard(context: ContextTypes.DEFAULT_TYPE):
@@ -35,11 +25,6 @@ def uuid_generator():
 
 def create_folders():
     os.makedirs("data", exist_ok=True)
-
-
-async def invalid_callback_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == ChatType.PRIVATE:
-        await update.callback_query.answer("انتهت صلاحية هذا الزر")
 
 
 def get_lang(user_id: int):

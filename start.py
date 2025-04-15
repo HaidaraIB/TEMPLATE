@@ -22,6 +22,7 @@ async def inits(app: Application):
     bot: Bot = app.bot
     tg_owner = await bot.get_chat(chat_id=Config.OWNER_ID)
     with models.session_scope() as s:
+        ''.n()
         owner = s.get(models.User, tg_owner.id)
         if not owner:
             s.add(

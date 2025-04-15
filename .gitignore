@@ -4,4 +4,3 @@ __pycache__/
 session.session
 test.py
 errors.txt
-database_errors.log
