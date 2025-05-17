@@ -6,14 +6,13 @@ from telegram import (
     KeyboardButtonRequestUsers,
 )
 from common.lang_dicts import *
-import models
 
 
-def build_user_keyboard(lang: Language):
+def build_user_keyboard(lang: models.Language):
     keyboard = [
         [
             InlineKeyboardButton(
-                text=TEXTS[lang]["settings"],
+                text=BUTTONS[lang]["settings"],
                 callback_data="user_settings",
             ),
         ]
@@ -52,7 +51,7 @@ def build_admin_keyboard():
 
 
 def build_back_to_home_page_button(
-    lang: Language = models.Language.ARABIC, is_admin: bool = True
+    lang: models.Language = models.Language.ARABIC, is_admin: bool = True
 ):
     button = [
         [
@@ -65,7 +64,7 @@ def build_back_to_home_page_button(
     return button
 
 
-def build_back_button(data: str, lang: Language = models.Language.ARABIC):
+def build_back_button(data: str, lang: models.Language = models.Language.ARABIC):
     return [
         InlineKeyboardButton(
             text=BUTTONS[lang]["back_button"],

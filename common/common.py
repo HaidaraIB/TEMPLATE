@@ -25,8 +25,3 @@ def uuid_generator():
 
 def create_folders():
     os.makedirs("data", exist_ok=True)
-
-
-def get_lang(user_id: int):
-    with models.session_scope() as s:
-        return s.get(models.User, user_id).lang

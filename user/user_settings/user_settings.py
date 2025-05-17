@@ -1,14 +1,12 @@
 from telegram import Update, Chat, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackQueryHandler
 from user.user_settings.common import build_settings_keyboard
-from common.common import get_lang
 from common.keyboards import (
     build_back_to_home_page_button,
     build_keyboard,
     build_back_button,
 )
 from common.lang_dicts import *
-import models
 
 
 async def user_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):

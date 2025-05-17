@@ -13,8 +13,8 @@ from common.decorators import (
     check_if_user_member_decorator,
 )
 from common.keyboards import build_user_keyboard, build_admin_keyboard
-from common.common import check_hidden_keyboard, get_lang
-from common.lang_dicts import TEXTS
+from common.common import check_hidden_keyboard
+from common.lang_dicts import *
 from Config import Config
 
 
@@ -22,7 +22,6 @@ async def inits(app: Application):
     bot: Bot = app.bot
     tg_owner = await bot.get_chat(chat_id=Config.OWNER_ID)
     with models.session_scope() as s:
-        ''.n()
         owner = s.get(models.User, tg_owner.id)
         if not owner:
             s.add(
