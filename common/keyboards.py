@@ -42,7 +42,7 @@ def build_admin_keyboard():
         ],
         [
             InlineKeyboardButton(
-                text="رسالة جماعية👥",
+                text="رسالة جماعية 👥",
                 callback_data="broadcast",
             )
         ],

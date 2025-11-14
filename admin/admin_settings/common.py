@@ -22,11 +22,3 @@ def build_admin_settings_keyboard():
         ],
     ]
     return keyboard
-
-
-def stringify_admin(admin: models.User):
-    return (
-        f"ID: <code>{admin.user_id}</code>\n"
-        f"Username: {f'@{admin.username}' if admin.username else '<i>لا يوجد</i>'}\n"
-        f"Full Name: {f'<b>{admin.name}</b>'}\n\n"
-    )

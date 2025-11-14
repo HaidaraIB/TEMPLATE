@@ -164,7 +164,7 @@ ban_unban_user_handler = ConversationHandler(
     fallbacks=[
         CallbackQueryHandler(
             back_to_user_id_to_ban_unban,
-            "^back_to_user_id_to_ban_unban$",
+            r"^back_to_user_id_to_ban_unban$",
         ),
         admin_command,
         back_to_admin_home_page_handler,

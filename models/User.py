@@ -13,5 +13,12 @@ class User(Base):
     is_banned = sa.Column(sa.Boolean, default=0)
     is_admin = sa.Column(sa.Boolean, default=0)
 
+    def __str__(self):
+        return (
+            f"ID: {self.user_id}\n"
+            f"Username: {self.username}\n"
+            f"Name: {self.name}\n"
+        )
+
     def __repr__(self):
         return f"User(user_id={self.user_id}, username={self.username}, name={self.name}, is_admin={bool(self.is_admin)}, is_banned={bool(self.is_banned)}"
