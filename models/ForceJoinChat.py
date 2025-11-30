@@ -1,5 +1,6 @@
 import sqlalchemy as sa
 from models.DB import Base
+from datetime import datetime
 
 
 class ForceJoinChat(Base):
@@ -9,6 +10,9 @@ class ForceJoinChat(Base):
     chat_id = sa.Column(sa.BigInteger, unique=True, nullable=False)
     chat_link = sa.Column(sa.String, nullable=False)
     chat_title = sa.Column(sa.String, nullable=True)
+
+    created_at = sa.Column(sa.DateTime, default=datetime.now)
+    updated_at = sa.Column(sa.DateTime, default=datetime.now, onupdate=datetime.now)
 
     def __str__(self):
         return (

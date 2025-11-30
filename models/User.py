@@ -1,6 +1,7 @@
 import sqlalchemy as sa
 from models.DB import Base
 from models.Language import Language
+from datetime import datetime
 
 
 class User(Base):
@@ -12,6 +13,9 @@ class User(Base):
     lang = sa.Column(sa.Enum(Language), default=Language.ARABIC)
     is_banned = sa.Column(sa.Boolean, default=0)
     is_admin = sa.Column(sa.Boolean, default=0)
+
+    created_at = sa.Column(sa.DateTime, default=datetime.now)
+    updated_at = sa.Column(sa.DateTime, default=datetime.now, onupdate=datetime.now)
 
     def __str__(self):
         return (
