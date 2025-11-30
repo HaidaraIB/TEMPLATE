@@ -1,3 +1,3 @@
-from admin.ban.ban import (
+from admin.ban.handlers import (
     ban_unban_user_handler,
 )

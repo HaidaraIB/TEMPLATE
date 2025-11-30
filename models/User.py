@@ -15,9 +15,9 @@ class User(Base):
 
     def __str__(self):
         return (
-            f"ID: {self.user_id}\n"
-            f"Username: {self.username}\n"
-            f"Name: {self.name}\n"
+            f"ID: <code>{self.user_id}</code>\n"
+            f"Username: {f'@{self.username}' if self.username else 'N/A'}\n"
+            f"Name: <b>{self.name}</b>"
         )
 
     def __repr__(self):

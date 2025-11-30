@@ -9,7 +9,7 @@ class TeleClientSingleton(TelegramClient):
         if not cls._instance:
 
             cls._instance = TelegramClient(
-                session=Config.SESSION,
+                session="tele_client",
                 api_id=Config.API_ID,
                 api_hash=Config.API_HASH,
             ).start(

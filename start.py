@@ -1,21 +1,12 @@
-from telegram import Update, Chat, BotCommandScopeChat, Bot
-from telegram.ext import (
-    CommandHandler,
-    ContextTypes,
-    Application,
-    ConversationHandler,
-)
-import models
-from custom_filters import Admin
-from common.decorators import (
-    check_if_user_banned_dec,
-    add_new_user_dec,
-    check_if_user_member_decorator,
-)
+from telegram import Update, BotCommandScopeChat, Bot
+from telegram.ext import CommandHandler, ContextTypes, Application, ConversationHandler
+from common.decorators import is_user_banned, add_new_user, is_user_member
 from common.keyboards import build_user_keyboard, build_admin_keyboard
 from common.common import check_hidden_keyboard
 from common.lang_dicts import *
+from custom_filters import Admin, PrivateChat, PrivateChatAndAdmin
 from Config import Config
+import models
 
 
 async def inits(app: Application):
@@ -44,11 +35,11 @@ async def set_commands(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-@add_new_user_dec
-@check_if_user_banned_dec
-@check_if_user_member_decorator
+@add_new_user
+@is_user_banned
+@is_user_member
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == Chat.PRIVATE:
+    if PrivateChat().filter(update):
         await set_commands(update, context)
         lang = get_lang(update.effective_user.id)
         await update.message.reply_text(
@@ -58,20 +49,23 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return ConversationHandler.END
 
 
+start_command = CommandHandler(command="start", callback=start)
+
+
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
+    if PrivateChatAndAdmin().filter(update):
         await set_commands(update, context)
+        lang = get_lang(update.effective_user.id)
         await update.message.reply_text(
-            text="أهلاً بك...",
+            text=TEXTS[lang]["welcome_msg"],
             reply_markup=check_hidden_keyboard(context),
         )
 
         await update.message.reply_text(
-            text="تعمل الآن كآدمن 🕹",
-            reply_markup=build_admin_keyboard(),
+            text=TEXTS[lang]["currently_admin"],
+            reply_markup=build_admin_keyboard(lang, update.effective_user.id),
         )
         return ConversationHandler.END
 
 
-start_command = CommandHandler(command="start", callback=start)
 admin_command = CommandHandler(command="admin", callback=admin)

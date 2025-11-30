@@ -1,3 +1,6 @@
 from custom_filters.Admin import Admin
-from custom_filters.User import User
 from custom_filters.Album import Album
+from custom_filters.PrivateChat import PrivateChat
+from custom_filters.PrivateChatAndAdmin import PrivateChatAndAdmin
+from custom_filters.Owner import Owner
+from custom_filters.PrivateChatAndOwner import PrivateChatAndOwner

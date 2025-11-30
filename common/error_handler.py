@@ -4,7 +4,6 @@ from telegram.error import TimedOut, NetworkError
 import traceback
 import json
 import html
-from common.constants import *
 from Config import Config
 
 

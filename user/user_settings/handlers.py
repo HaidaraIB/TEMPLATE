@@ -1,16 +1,17 @@
-from telegram import Update, Chat, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackQueryHandler
-from user.user_settings.common import build_settings_keyboard
+from user.user_settings.keyboards import build_settings_keyboard
 from common.keyboards import (
     build_back_to_home_page_button,
     build_keyboard,
     build_back_button,
 )
 from common.lang_dicts import *
+from custom_filters import PrivateChat
 
 
 async def user_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == Chat.PRIVATE:
+    if PrivateChat().filter(update):
         lang = get_lang(update.effective_user.id)
         keyboard = build_settings_keyboard(lang)
         keyboard.append(build_back_to_home_page_button(lang=lang, is_admin=False)[0])
@@ -20,8 +21,14 @@ async def user_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
+user_settings_handler = CallbackQueryHandler(
+    user_settings,
+    "^user_settings$|^back_to_user_settings$",
+)
+
+
 async def change_lang(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == Chat.PRIVATE:
+    if PrivateChat().filter(update):
         if update.callback_query.data in models.Language._member_names_:
             lang = models.Language[update.callback_query.data]
             with models.session_scope() as s:
@@ -48,10 +55,6 @@ async def change_lang(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-user_settings_handler = CallbackQueryHandler(
-    user_settings,
-    "^user_settings$|^back_to_user_settings$",
-)
 change_lang_handler = CallbackQueryHandler(
     change_lang,
     lambda x: x in [l.name for l in models.Language] + ["change_lang"],

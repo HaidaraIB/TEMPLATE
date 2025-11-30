@@ -1,1 +1,1 @@
-from user.user_settings.user_settings import *
+from user.user_settings.handlers import *

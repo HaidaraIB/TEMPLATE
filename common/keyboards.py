@@ -6,6 +6,8 @@ from telegram import (
     KeyboardButtonRequestUsers,
 )
 from common.lang_dicts import *
+from Config import Config
+import models
 
 
 def build_user_keyboard(lang: models.Language):
@@ -20,33 +22,50 @@ def build_user_keyboard(lang: models.Language):
     return InlineKeyboardMarkup(keyboard)
 
 
-def build_admin_keyboard():
-    keyboard = [
+def build_admin_keyboard(
+    lang: models.Language = models.Language.ARABIC, user_id: int = None
+):
+    keyboard = []
+
+    # Admin settings button only for owner
+    if user_id and user_id == Config.OWNER_ID:
+        keyboard.append(
+            [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["admin_settings"],
+                    callback_data="admin_settings",
+                )
+            ]
+        )
+
+    keyboard.extend(
         [
-            InlineKeyboardButton(
-                text="إعدادات الآدمن ⚙️🎛",
-                callback_data="admin_settings",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="حظر/فك حظر 🔓🔒",
-                callback_data="ban_unban",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="إخفاء/إظهار كيبورد معرفة الآيديات🪄",
-                callback_data="hide_ids_keyboard",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="رسالة جماعية 👥",
-                callback_data="broadcast",
-            )
-        ],
-    ]
+            [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["force_join_chats_settings"],
+                    callback_data="force_join_chats_settings",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["ban_unban"],
+                    callback_data="ban_unban",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["hide_ids_keyboard"],
+                    callback_data="hide_ids_keyboard",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["broadcast"],
+                    callback_data="broadcast",
+                )
+            ],
+        ]
+    )
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -73,17 +92,17 @@ def build_back_button(data: str, lang: models.Language = models.Language.ARABIC)
     ]
 
 
-def build_request_buttons():
+def build_request_buttons(lang: models.Language = models.Language.ARABIC):
     keyboard = [
         [
             KeyboardButton(
-                text="معرفة id مستخدم 🆔",
+                text=BUTTONS[lang]['user'],
                 request_users=KeyboardButtonRequestUsers(
                     request_id=0, user_is_bot=False
                 ),
             ),
             KeyboardButton(
-                text="معرفة id قناة 📢",
+                text=BUTTONS[lang]['channel'],
                 request_chat=KeyboardButtonRequestChat(
                     request_id=1, chat_is_channel=True
                 ),
@@ -91,13 +110,13 @@ def build_request_buttons():
         ],
         [
             KeyboardButton(
-                text="معرفة id مجموعة 👥",
+                text=BUTTONS[lang]['group'],
                 request_chat=KeyboardButtonRequestChat(
                     request_id=2, chat_is_channel=False
                 ),
             ),
             KeyboardButton(
-                text="معرفة id بوت 🤖",
+                text=BUTTONS[lang]['bot'],
                 request_users=KeyboardButtonRequestUsers(
                     request_id=3, user_is_bot=True
                 ),

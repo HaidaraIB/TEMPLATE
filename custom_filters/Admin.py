@@ -6,7 +6,8 @@ import models
 class Admin(UpdateFilter):
     def filter(self, update: Update):
         with models.session_scope() as s:
-            return s.get(
+            user = s.get(
                 models.User,
                 update.effective_user.id,
-            ).is_admin
+            )
+            return user and user.is_admin

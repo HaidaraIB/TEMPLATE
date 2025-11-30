@@ -1,15 +1,15 @@
-from telegram import Update, Chat
+from telegram import Update
 from telegram.ext import ContextTypes, CallbackQueryHandler, ConversationHandler
-from common.decorators import check_if_user_member_decorator
+from common.decorators import is_user_member
 from common.keyboards import build_user_keyboard, build_admin_keyboard
-from common.constants import *
 from common.lang_dicts import *
-from custom_filters import Admin
+from common.lang_dicts import *
+from custom_filters import Admin, PrivateChat, PrivateChatAndAdmin
 
 
-@check_if_user_member_decorator
+@is_user_member
 async def back_to_user_home_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == Chat.PRIVATE:
+    if PrivateChat().filter(update):
         lang = get_lang(update.effective_user.id)
         await update.callback_query.edit_message_text(
             text=TEXTS[lang]["home_page"],
@@ -19,10 +19,11 @@ async def back_to_user_home_page(update: Update, context: ContextTypes.DEFAULT_T
 
 
 async def back_to_admin_home_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == Chat.PRIVATE and Admin().filter(update):
+    if PrivateChatAndAdmin().filter(update):
+        lang = get_lang(update.effective_user.id)
         await update.callback_query.edit_message_text(
-            text=HOME_PAGE_TEXT,
-            reply_markup=build_admin_keyboard(),
+            text=TEXTS[lang]["home_page"],
+            reply_markup=build_admin_keyboard(lang, update.effective_user.id),
         )
         return ConversationHandler.END
 

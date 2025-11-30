@@ -5,7 +5,7 @@ import functools
 import models
 
 
-def check_if_user_banned_dec(func):
+def is_user_banned(func):
     @functools.wraps(func)
     async def wrapper(
         update: Update, context: ContextTypes.DEFAULT_TYPE, *args, **kwargs
@@ -19,7 +19,7 @@ def check_if_user_banned_dec(func):
     return wrapper
 
 
-def add_new_user_dec(func):
+def add_new_user(func):
     @functools.wraps(func)
     async def wrapper(
         update: Update, context: ContextTypes.DEFAULT_TYPE, *args, **kwargs
@@ -39,7 +39,7 @@ def add_new_user_dec(func):
     return wrapper
 
 
-def check_if_user_member_decorator(func):
+def is_user_member(func):
     @functools.wraps(func)
     async def wrapper(update, context, *args, **kwargs):
         is_user_member = await check_if_user_member(update=update, context=context)

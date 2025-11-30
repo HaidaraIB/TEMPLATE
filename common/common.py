@@ -4,6 +4,7 @@ from common.keyboards import build_request_buttons
 import os
 import models
 import uuid
+from datetime import datetime
 
 
 def check_hidden_keyboard(context: ContextTypes.DEFAULT_TYPE):
@@ -25,3 +26,11 @@ def uuid_generator():
 
 def create_folders():
     os.makedirs("data", exist_ok=True)
+
+
+def format_datetime(d: datetime):
+    return
+
+
+def format_float(f: float):
+    return float()

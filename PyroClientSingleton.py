@@ -9,7 +9,7 @@ class PyroClientSingleton(Client):
         if not cls._instance:
 
             cls._instance = Client(
-                name=Config.SESSION,
+                name="pyro_client",
                 api_id=Config.API_ID,
                 api_hash=Config.API_HASH,
                 bot_token=Config.BOT_TOKEN,
