@@ -14,6 +14,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+import sqlalchemy as sa
 from admin.admin_settings.keyboards import (
     build_admin_settings_keyboard,
     build_permissions_keyboard,
@@ -25,13 +26,11 @@ from common.keyboards import (
     build_back_button,
     build_keyboard,
 )
-from common.lang_dicts import *
-from custom_filters import PrivateChatAndOwner, HasPermission
+from common.lang_dicts import TEXTS, BUTTONS, get_lang
+from custom_filters import PrivateChatAndOwner
 from start import admin_command
 from Config import Config
-import sqlalchemy as sa
 import models
-from models import Permission
 
 
 async def admin_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -146,7 +145,7 @@ async def toggle_permission(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         permission_str = callback_data.replace("toggle_permission_", "")
         try:
-            permission = Permission(permission_str)
+            permission = models.Permission(permission_str)
         except ValueError:
             await update.callback_query.answer(
                 text="Invalid permission", show_alert=True
@@ -431,16 +430,16 @@ async def show_admin_permissions(update: Update, context: ContextTypes.DEFAULT_T
 
         if selected_permissions:
             permission_names = {
-                Permission.BAN_USERS: TEXTS[lang].get(
+                models.Permission.BAN_USERS: TEXTS[lang].get(
                     "permission_ban_users", "Ban/Unban Users"
                 ),
-                Permission.BROADCAST: TEXTS[lang].get(
+                models.Permission.BROADCAST: TEXTS[lang].get(
                     "permission_broadcast", "Broadcast Messages"
                 ),
-                Permission.MANAGE_FORCE_JOIN: TEXTS[lang].get(
+                models.Permission.MANAGE_FORCE_JOIN: TEXTS[lang].get(
                     "permission_manage_force_join", "Manage Force Join"
                 ),
-                Permission.VIEW_IDS: TEXTS[lang].get("permission_view_ids", "View IDs"),
+                models.Permission.VIEW_IDS: TEXTS[lang].get("permission_view_ids", "View IDs"),
             }
             for perm in selected_permissions:
                 permissions_text += f"✅ {permission_names.get(perm, perm.value)}\n"
@@ -479,7 +478,7 @@ async def toggle_admin_permission(update: Update, context: ContextTypes.DEFAULT_
                 s.query(models.AdminPermission)
                 .filter(
                     models.AdminPermission.admin_id == admin_id,
-                    models.AdminPermission.permission == Permission(permission_str),
+                    models.AdminPermission.permission == models.Permission(permission_str),
                 )
                 .first()
             )
@@ -489,7 +488,7 @@ async def toggle_admin_permission(update: Update, context: ContextTypes.DEFAULT_
                 message = TEXTS[lang]["permission_revoked"]
             else:
                 new_permission = models.AdminPermission(
-                    admin_id=admin_id, permission=Permission(permission_str)
+                    admin_id=admin_id, permission=models.Permission(permission_str)
                 )
                 s.add(new_permission)
                 message = TEXTS[lang]["permission_granted"]

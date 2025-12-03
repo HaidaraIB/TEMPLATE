@@ -3,7 +3,7 @@ from telegram.ext import ContextTypes, CallbackQueryHandler, MessageHandler, fil
 from common.keyboards import build_admin_keyboard, build_request_buttons
 from custom_filters import PrivateChatAndAdmin, PermissionFilter
 from models import Permission
-from common.lang_dicts import *
+from common.lang_dicts import TEXTS, get_lang
 
 
 async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):

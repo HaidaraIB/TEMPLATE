@@ -16,6 +16,7 @@ from admin.admin_settings import *
 from admin.broadcast import *
 from admin.ban import *
 from admin.force_join_chats_settings import *
+from admin.manage_users_settings import *
 
 from models import init_db
 
@@ -37,6 +38,10 @@ def setup_and_run():
     app.add_handler(remove_admin_handler)
     app.add_handler(edit_admin_permissions_handler)
     app.add_handler(admin_settings_handler)
+    
+    # MANAGE USERS SETTINGS
+    app.add_handler(manage_users_settings_handler)
+    app.add_handler(export_users_handler)
 
     # FORCE JOIN CHATS
     app.add_handler(add_force_join_chat_handler)

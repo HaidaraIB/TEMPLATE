@@ -3,7 +3,7 @@ from telegram.ext import CommandHandler, ContextTypes, Application, Conversation
 from common.decorators import is_user_banned, add_new_user, is_user_member
 from common.keyboards import build_user_keyboard, build_admin_keyboard
 from common.common import check_hidden_permission_requests_keyboard
-from common.lang_dicts import *
+from common.lang_dicts import TEXTS, get_lang
 from custom_filters import Admin, PrivateChat, PrivateChatAndAdmin
 from Config import Config
 import models

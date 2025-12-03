@@ -50,7 +50,9 @@ def build_permissions_keyboard(
         models.Permission.MANAGE_FORCE_JOIN: BUTTONS[lang].get(
             "permission_manage_force_join", "Manage Force Join"
         ),
-        models.Permission.VIEW_IDS: BUTTONS[lang].get("permission_view_ids", "View IDs"),
+        models.Permission.VIEW_IDS: BUTTONS[lang].get(
+            "permission_view_ids", "View IDs"
+        ),
     }
 
     for permission in models.Permission:

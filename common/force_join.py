@@ -2,7 +2,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackQueryHandler
 from telegram.constants import ChatMemberStatus
 from common.keyboards import build_user_keyboard
-from common.lang_dicts import *
+from common.lang_dicts import TEXTS, BUTTONS, get_lang
 import models
 
 

@@ -21,15 +21,16 @@ from common.keyboards import (
     build_back_to_home_page_button,
     build_back_button,
 )
-from common.lang_dicts import *
+from common.lang_dicts import TEXTS, BUTTONS, get_lang
 from custom_filters import PrivateChatAndAdmin, PermissionFilter
-from models import Permission
 from start import admin_command
 import models
 
 
 async def force_join_chats_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.MANAGE_FORCE_JOIN).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.MANAGE_FORCE_JOIN
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         keyboard = build_force_join_chats_keyboard(lang)
         keyboard.append(build_back_to_home_page_button(lang=lang, is_admin=True)[0])
@@ -49,7 +50,9 @@ CHAT_ID, CHAT_LINK = range(2)
 
 
 async def add_force_join_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.MANAGE_FORCE_JOIN).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.MANAGE_FORCE_JOIN
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         await update.callback_query.answer()
         await update.callback_query.delete_message()
@@ -82,7 +85,9 @@ async def add_force_join_chat(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.MANAGE_FORCE_JOIN).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.MANAGE_FORCE_JOIN
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
 
         if update.effective_message.chat_shared:
@@ -170,13 +175,15 @@ async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             await update.message.reply_text(
                 text=TEXTS[lang]["home_page"],
-                reply_markup=build_admin_keyboard(lang),
+                reply_markup=build_admin_keyboard(lang, update.effective_user.id),
             )
             return ConversationHandler.END
 
 
 async def get_chat_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.MANAGE_FORCE_JOIN).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.MANAGE_FORCE_JOIN
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         chat_link = update.message.text.strip()
 
@@ -233,7 +240,7 @@ async def get_chat_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         await update.message.reply_text(
             text=TEXTS[lang]["home_page"],
-            reply_markup=build_admin_keyboard(lang),
+            reply_markup=build_admin_keyboard(lang, update.effective_user.id),
         )
         return ConversationHandler.END
 
@@ -275,7 +282,9 @@ CHOOSE_CHAT_TO_REMOVE = range(1)
 
 
 async def remove_force_join_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.MANAGE_FORCE_JOIN).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.MANAGE_FORCE_JOIN
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         with models.session_scope() as s:
             if update.callback_query.data.isnumeric():
@@ -349,7 +358,9 @@ remove_force_join_chat_handler = ConversationHandler(
 
 
 async def show_force_join_chats(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.MANAGE_FORCE_JOIN).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.MANAGE_FORCE_JOIN
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         with models.session_scope() as s:
             chats = s.query(models.ForceJoinChat).all()

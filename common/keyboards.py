@@ -5,11 +5,10 @@ from telegram import (
     KeyboardButtonRequestChat,
     KeyboardButtonRequestUsers,
 )
-from common.lang_dicts import *
+from custom_filters import HasPermission
+from common.lang_dicts import BUTTONS
 from Config import Config
 import models
-from custom_filters import HasPermission
-from models import Permission
 
 
 def build_user_keyboard(lang: models.Language):
@@ -29,94 +28,97 @@ def build_admin_keyboard(
 ):
     keyboard = []
 
-    # Admin settings button only for owner
     if user_id and user_id == Config.OWNER_ID:
-        keyboard.append(
+        keyboard = [
             [
                 InlineKeyboardButton(
                     text=BUTTONS[lang]["admin_settings"],
                     callback_data="admin_settings",
                 )
-            ]
-        )
-
-    # إضافة الأزرار بناءً على الصلاحيات
-    # المالك لديه جميع الصلاحيات
-    if user_id:
-        # Force Join Chats Settings
-        if user_id == Config.OWNER_ID or HasPermission.check(user_id, Permission.MANAGE_FORCE_JOIN):
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        text=BUTTONS[lang]["force_join_chats_settings"],
-                        callback_data="force_join_chats_settings",
-                    )
-                ]
-            )
-        
-        # Ban/Unban
-        if user_id == Config.OWNER_ID or HasPermission.check(user_id, Permission.BAN_USERS):
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        text=BUTTONS[lang]["ban_unban"],
-                        callback_data="ban_unban",
-                    )
-                ]
-            )
-        
-        # Hide IDs Keyboard
-        if user_id == Config.OWNER_ID or HasPermission.check(user_id, Permission.VIEW_IDS):
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        text=BUTTONS[lang]["hide_ids_keyboard"],
-                        callback_data="hide_ids_keyboard",
-                    )
-                ]
-            )
-        
-        # Broadcast
-        if user_id == Config.OWNER_ID or HasPermission.check(user_id, Permission.BROADCAST):
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        text=BUTTONS[lang]["broadcast"],
-                        callback_data="broadcast",
-                    )
-                ]
-            )
-    else:
-        # إذا لم يتم تحديد user_id، إظهار جميع الأزرار (للتوافق مع الكود القديم)
-        keyboard.extend(
+            ],
             [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["manage_users_settings"],
+                    callback_data="manage_users_settings",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["force_join_chats_settings"],
+                    callback_data="force_join_chats_settings",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["ban_unban"],
+                    callback_data="ban_unban",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["hide_ids_keyboard"],
+                    callback_data="hide_ids_keyboard",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=BUTTONS[lang]["broadcast"],
+                    callback_data="broadcast",
+                )
+            ],
+        ]
+
+    elif user_id:
+        if HasPermission.check(user_id, models.Permission.MANAGE_FORCE_JOIN):
+            keyboard.append(
                 [
                     InlineKeyboardButton(
                         text=BUTTONS[lang]["force_join_chats_settings"],
                         callback_data="force_join_chats_settings",
                     )
-                ],
+                ]
+            )
+
+        if HasPermission.check(user_id, models.Permission.MANAGE_USERS):
+            keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        text=BUTTONS[lang]["manage_users_settings"],
+                        callback_data="manage_users_settings",
+                    )
+                ]
+            )
+
+        if HasPermission.check(user_id, models.Permission.BAN_USERS):
+            keyboard.append(
                 [
                     InlineKeyboardButton(
                         text=BUTTONS[lang]["ban_unban"],
                         callback_data="ban_unban",
                     )
-                ],
+                ]
+            )
+
+        if HasPermission.check(user_id, models.Permission.VIEW_IDS):
+            keyboard.append(
                 [
                     InlineKeyboardButton(
                         text=BUTTONS[lang]["hide_ids_keyboard"],
                         callback_data="hide_ids_keyboard",
                     )
-                ],
+                ]
+            )
+
+        if HasPermission.check(user_id, models.Permission.BROADCAST):
+            keyboard.append(
                 [
                     InlineKeyboardButton(
                         text=BUTTONS[lang]["broadcast"],
                         callback_data="broadcast",
                     )
-                ],
-            ]
-        )
-    
+                ]
+            )
+
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -147,13 +149,13 @@ def build_request_buttons(lang: models.Language = models.Language.ARABIC):
     keyboard = [
         [
             KeyboardButton(
-                text=BUTTONS[lang]['user'],
+                text=BUTTONS[lang]["user"],
                 request_users=KeyboardButtonRequestUsers(
                     request_id=0, user_is_bot=False
                 ),
             ),
             KeyboardButton(
-                text=BUTTONS[lang]['channel'],
+                text=BUTTONS[lang]["channel"],
                 request_chat=KeyboardButtonRequestChat(
                     request_id=1, chat_is_channel=True
                 ),
@@ -161,13 +163,13 @@ def build_request_buttons(lang: models.Language = models.Language.ARABIC):
         ],
         [
             KeyboardButton(
-                text=BUTTONS[lang]['group'],
+                text=BUTTONS[lang]["group"],
                 request_chat=KeyboardButtonRequestChat(
                     request_id=2, chat_is_channel=False
                 ),
             ),
             KeyboardButton(
-                text=BUTTONS[lang]['bot'],
+                text=BUTTONS[lang]["bot"],
                 request_users=KeyboardButtonRequestUsers(
                     request_id=3, user_is_bot=True
                 ),

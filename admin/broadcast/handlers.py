@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardMarkup, error
+from telegram import Update, InlineKeyboardMarkup
 from telegram.ext import (
     ContextTypes,
     ConversationHandler,
@@ -11,15 +11,14 @@ from common.keyboards import (
     build_back_to_home_page_button,
     build_back_button,
 )
+from custom_filters import PrivateChatAndAdmin, PermissionFilter
 from admin.broadcast.keyboards import build_broadcast_keyboard
 from admin.broadcast.functions import send_to
 from common.back_to_home_page import back_to_admin_home_page_handler
-from common.lang_dicts import *
+from common.lang_dicts import TEXTS, get_lang
 from start import start_command, admin_command
 import models
 import asyncio
-from custom_filters import PrivateChatAndAdmin, PermissionFilter
-from models import Permission
 
 (
     THE_MESSAGE,
@@ -30,17 +29,23 @@ from models import Permission
 
 
 async def broadcast_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.BROADCAST
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         await update.callback_query.edit_message_text(
             text=TEXTS[lang]["send_message"],
-            reply_markup=InlineKeyboardMarkup(build_back_to_home_page_button(lang=lang, is_admin=True)),
+            reply_markup=InlineKeyboardMarkup(
+                build_back_to_home_page_button(lang=lang, is_admin=True)
+            ),
         )
         return THE_MESSAGE
 
 
 async def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.BROADCAST
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         if update.message:
             context.user_data["the_message"] = update.message
@@ -60,7 +65,9 @@ back_to_the_message = broadcast_message
 
 
 async def choose_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.BROADCAST
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         back_buttons = [
             build_back_button("back_to_send_to", lang=lang),
@@ -121,7 +128,9 @@ back_to_send_to = get_message
 
 
 async def get_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.BROADCAST
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         users = set(map(int, update.message.text.split("\n")))
         asyncio.create_task(send_to(users=users, context=context))
@@ -133,15 +142,15 @@ async def get_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(
+        models.Permission.BROADCAST
+    ).filter(update):
         lang = get_lang(update.effective_user.id)
         chat_id = int(update.message.text)
         try:
             chat = await context.bot.get_chat(chat_id=chat_id)
         except:
-            await update.message.reply_text(
-                text=TEXTS[lang]["bot_must_be_member"]
-            )
+            await update.message.reply_text(text=TEXTS[lang]["bot_must_be_member"])
             return
         await send_to(users=[chat_id], context=context)
         await update.message.reply_text(

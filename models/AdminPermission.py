@@ -9,6 +9,7 @@ class Permission(Enum):
     BROADCAST = "broadcast"
     MANAGE_FORCE_JOIN = "manage_force_join"
     VIEW_IDS = "view_ids"
+    MANAGE_USERS = "manage_users"
 
 
 class AdminPermission(Base):

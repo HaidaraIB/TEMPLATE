@@ -6,8 +6,9 @@ from common.keyboards import (
     build_keyboard,
     build_back_button,
 )
-from common.lang_dicts import *
+from common.lang_dicts import TEXTS, get_lang
 from custom_filters import PrivateChat
+import models
 
 
 async def user_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):

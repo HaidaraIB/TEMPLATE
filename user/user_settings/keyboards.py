@@ -1,5 +1,6 @@
 from telegram import InlineKeyboardButton
-from common.lang_dicts import *
+from common.lang_dicts import BUTTONS
+import models
 
 
 def build_settings_keyboard(lang: models.Language):
@@ -12,4 +13,3 @@ def build_settings_keyboard(lang: models.Language):
         ]
     ]
     return keyboard
-
