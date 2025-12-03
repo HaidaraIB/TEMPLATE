@@ -2,7 +2,7 @@ from telegram import Update, BotCommandScopeChat, Bot
 from telegram.ext import CommandHandler, ContextTypes, Application, ConversationHandler
 from common.decorators import is_user_banned, add_new_user, is_user_member
 from common.keyboards import build_user_keyboard, build_admin_keyboard
-from common.common import check_hidden_keyboard
+from common.common import check_hidden_permission_requests_keyboard
 from common.lang_dicts import *
 from custom_filters import Admin, PrivateChat, PrivateChatAndAdmin
 from Config import Config
@@ -43,7 +43,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await set_commands(update, context)
         lang = get_lang(update.effective_user.id)
         await update.message.reply_text(
-            text=TEXTS[lang]["welcome_msg"],
+            text=TEXTS[lang]["user_welcome_msg"],
             reply_markup=build_user_keyboard(lang),
         )
         return ConversationHandler.END
@@ -57,8 +57,10 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await set_commands(update, context)
         lang = get_lang(update.effective_user.id)
         await update.message.reply_text(
-            text=TEXTS[lang]["welcome_msg"],
-            reply_markup=check_hidden_keyboard(context),
+            text=TEXTS[lang]["admin_welcome_msg"],
+            reply_markup=check_hidden_permission_requests_keyboard(
+                context=context, admin_id=update.effective_user.id
+            ),
         )
 
         await update.message.reply_text(

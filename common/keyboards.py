@@ -8,6 +8,8 @@ from telegram import (
 from common.lang_dicts import *
 from Config import Config
 import models
+from custom_filters import HasPermission
+from models import Permission
 
 
 def build_user_keyboard(lang: models.Language):
@@ -38,34 +40,83 @@ def build_admin_keyboard(
             ]
         )
 
-    keyboard.extend(
-        [
+    # إضافة الأزرار بناءً على الصلاحيات
+    # المالك لديه جميع الصلاحيات
+    if user_id:
+        # Force Join Chats Settings
+        if user_id == Config.OWNER_ID or HasPermission.check(user_id, Permission.MANAGE_FORCE_JOIN):
+            keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        text=BUTTONS[lang]["force_join_chats_settings"],
+                        callback_data="force_join_chats_settings",
+                    )
+                ]
+            )
+        
+        # Ban/Unban
+        if user_id == Config.OWNER_ID or HasPermission.check(user_id, Permission.BAN_USERS):
+            keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        text=BUTTONS[lang]["ban_unban"],
+                        callback_data="ban_unban",
+                    )
+                ]
+            )
+        
+        # Hide IDs Keyboard
+        if user_id == Config.OWNER_ID or HasPermission.check(user_id, Permission.VIEW_IDS):
+            keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        text=BUTTONS[lang]["hide_ids_keyboard"],
+                        callback_data="hide_ids_keyboard",
+                    )
+                ]
+            )
+        
+        # Broadcast
+        if user_id == Config.OWNER_ID or HasPermission.check(user_id, Permission.BROADCAST):
+            keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        text=BUTTONS[lang]["broadcast"],
+                        callback_data="broadcast",
+                    )
+                ]
+            )
+    else:
+        # إذا لم يتم تحديد user_id، إظهار جميع الأزرار (للتوافق مع الكود القديم)
+        keyboard.extend(
             [
-                InlineKeyboardButton(
-                    text=BUTTONS[lang]["force_join_chats_settings"],
-                    callback_data="force_join_chats_settings",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text=BUTTONS[lang]["ban_unban"],
-                    callback_data="ban_unban",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text=BUTTONS[lang]["hide_ids_keyboard"],
-                    callback_data="hide_ids_keyboard",
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text=BUTTONS[lang]["broadcast"],
-                    callback_data="broadcast",
-                )
-            ],
-        ]
-    )
+                [
+                    InlineKeyboardButton(
+                        text=BUTTONS[lang]["force_join_chats_settings"],
+                        callback_data="force_join_chats_settings",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text=BUTTONS[lang]["ban_unban"],
+                        callback_data="ban_unban",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text=BUTTONS[lang]["hide_ids_keyboard"],
+                        callback_data="hide_ids_keyboard",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text=BUTTONS[lang]["broadcast"],
+                        callback_data="broadcast",
+                    )
+                ],
+            ]
+        )
+    
     return InlineKeyboardMarkup(keyboard)
 
 

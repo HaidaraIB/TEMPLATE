@@ -3,4 +3,5 @@ from admin.admin_settings.handlers import (
     show_admins_handler,
     remove_admin_handler,
     admin_settings_handler,
+    edit_admin_permissions_handler,
 )

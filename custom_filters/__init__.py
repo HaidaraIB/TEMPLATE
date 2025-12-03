@@ -4,3 +4,4 @@ from custom_filters.PrivateChat import PrivateChat
 from custom_filters.PrivateChatAndAdmin import PrivateChatAndAdmin
 from custom_filters.Owner import Owner
 from custom_filters.PrivateChatAndOwner import PrivateChatAndOwner
+from custom_filters.Permission import PermissionFilter, HasPermission

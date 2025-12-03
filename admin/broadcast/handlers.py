@@ -18,7 +18,8 @@ from common.lang_dicts import *
 from start import start_command, admin_command
 import models
 import asyncio
-from custom_filters import PrivateChatAndAdmin
+from custom_filters import PrivateChatAndAdmin, PermissionFilter
+from models import Permission
 
 (
     THE_MESSAGE,
@@ -29,7 +30,7 @@ from custom_filters import PrivateChatAndAdmin
 
 
 async def broadcast_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
         lang = get_lang(update.effective_user.id)
         await update.callback_query.edit_message_text(
             text=TEXTS[lang]["send_message"],
@@ -39,7 +40,7 @@ async def broadcast_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
         lang = get_lang(update.effective_user.id)
         if update.message:
             context.user_data["the_message"] = update.message
@@ -59,7 +60,7 @@ back_to_the_message = broadcast_message
 
 
 async def choose_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
         lang = get_lang(update.effective_user.id)
         back_buttons = [
             build_back_button("back_to_send_to", lang=lang),
@@ -120,7 +121,7 @@ back_to_send_to = get_message
 
 
 async def get_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
         lang = get_lang(update.effective_user.id)
         users = set(map(int, update.message.text.split("\n")))
         asyncio.create_task(send_to(users=users, context=context))
@@ -132,7 +133,7 @@ async def get_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.BROADCAST).filter(update):
         lang = get_lang(update.effective_user.id)
         chat_id = int(update.message.text)
         try:

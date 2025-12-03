@@ -35,6 +35,7 @@ def setup_and_run():
     app.add_handler(show_admins_handler)
     app.add_handler(add_admin_handler)
     app.add_handler(remove_admin_handler)
+    app.add_handler(edit_admin_permissions_handler)
     app.add_handler(admin_settings_handler)
 
     # FORCE JOIN CHATS

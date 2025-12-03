@@ -5,14 +5,20 @@ import os
 import models
 import uuid
 from datetime import datetime
+from custom_filters import HasPermission
+from models import Permission
 
 
-def check_hidden_keyboard(context: ContextTypes.DEFAULT_TYPE):
-    if (
+def check_hidden_permission_requests_keyboard(context: ContextTypes.DEFAULT_TYPE, admin_id: int):
+    if not HasPermission.check(admin_id, Permission.VIEW_IDS):
+        reply_markup = ReplyKeyboardRemove()
+    elif (
         not context.user_data.get("request_keyboard_hidden", None)
         or not context.user_data["request_keyboard_hidden"]
     ):
         context.user_data["request_keyboard_hidden"] = False
+        request_buttons = build_request_buttons()
+        reply_markup = ReplyKeyboardMarkup(request_buttons, resize_keyboard=True)
         request_buttons = build_request_buttons()
         reply_markup = ReplyKeyboardMarkup(request_buttons, resize_keyboard=True)
     else:

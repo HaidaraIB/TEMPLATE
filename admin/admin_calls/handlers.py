@@ -1,12 +1,13 @@
 from telegram import Update, ReplyKeyboardRemove, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackQueryHandler, MessageHandler, filters
 from common.keyboards import build_admin_keyboard, build_request_buttons
-from custom_filters import PrivateChatAndAdmin
+from custom_filters import PrivateChatAndAdmin, PermissionFilter
+from models import Permission
 from common.lang_dicts import *
 
 
 async def find_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.VIEW_IDS).filter(update):
         if update.effective_message.users_shared:
             await update.message.reply_text(
                 text=f"<code>{update.effective_message.users_shared.users[0].user_id}</code>",
@@ -24,7 +25,7 @@ find_id_handler = MessageHandler(
 
 
 async def hide_ids_keyboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if PrivateChatAndAdmin().filter(update):
+    if PrivateChatAndAdmin().filter(update) and PermissionFilter(Permission.VIEW_IDS).filter(update):
         lang = get_lang(update.effective_user.id)
         if (
             not context.user_data.get("request_keyboard_hidden", None)
