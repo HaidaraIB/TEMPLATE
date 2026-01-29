@@ -1,6 +1,5 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from common.force_join import check_if_user_member
 import functools
 import models
 
@@ -12,7 +11,7 @@ def is_user_banned(func):
     ):
         with models.session_scope() as s:
             user = s.get(models.User, update.effective_user.id)
-            if user.is_banned:
+            if user and user.is_banned:
                 return
         return await func(update, context, *args, **kwargs)
 
@@ -42,6 +41,7 @@ def add_new_user(func):
 def is_user_member(func):
     @functools.wraps(func)
     async def wrapper(update, context, *args, **kwargs):
+        from common.force_join import check_if_user_member
         is_user_member = await check_if_user_member(update=update, context=context)
         if not is_user_member:
             return

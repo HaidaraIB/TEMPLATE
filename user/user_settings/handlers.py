@@ -7,10 +7,12 @@ from common.keyboards import (
     build_back_button,
 )
 from common.lang_dicts import TEXTS, get_lang
+from common.decorators import is_user_banned
 from custom_filters import PrivateChat
 import models
 
 
+@is_user_banned
 async def user_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if PrivateChat().filter(update):
         lang = get_lang(update.effective_user.id)
@@ -28,6 +30,7 @@ user_settings_handler = CallbackQueryHandler(
 )
 
 
+@is_user_banned
 async def change_lang(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if PrivateChat().filter(update):
         if update.callback_query.data in models.Language._member_names_:

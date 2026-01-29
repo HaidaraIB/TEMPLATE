@@ -3,6 +3,7 @@ from telegram.ext import ContextTypes, CallbackQueryHandler
 from telegram.constants import ChatMemberStatus
 from common.keyboards import build_user_keyboard
 from common.lang_dicts import TEXTS, BUTTONS, get_lang
+from common.decorators import is_user_banned
 import models
 
 
@@ -75,6 +76,7 @@ async def check_if_user_member(update: Update, context: ContextTypes.DEFAULT_TYP
     return False
 
 
+@is_user_banned
 async def check_joined(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Get all force join chats from database
     with models.session_scope() as s:
