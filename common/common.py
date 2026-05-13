@@ -9,7 +9,9 @@ from custom_filters import HasPermission
 from models import Permission
 
 
-def check_hidden_permission_requests_keyboard(context: ContextTypes.DEFAULT_TYPE, admin_id: int):
+def check_hidden_permission_requests_keyboard(
+    context: ContextTypes.DEFAULT_TYPE, admin_id: int
+):
     if not HasPermission.check(admin_id, Permission.VIEW_IDS):
         reply_markup = ReplyKeyboardRemove()
     elif (
@@ -35,8 +37,8 @@ def create_folders():
 
 
 def format_datetime(d: datetime):
-    return
+    return d.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def format_float(f: float):
-    return float()
+    return "{:,.2f}".format(f).rstrip("0").rstrip(".")

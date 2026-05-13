@@ -3,7 +3,9 @@ from common.lang_dicts import BUTTONS
 import models
 
 
-def build_manage_users_settings_keyboard(lang: models.Language = models.Language.ARABIC):
+def build_manage_users_settings_keyboard(
+    lang: models.Language = models.Language.ARABIC,
+):
     keyboard = [
         [
             InlineKeyboardButton(
@@ -13,4 +15,3 @@ def build_manage_users_settings_keyboard(lang: models.Language = models.Language
         ],
     ]
     return keyboard
-

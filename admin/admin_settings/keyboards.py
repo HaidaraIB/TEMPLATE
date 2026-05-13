@@ -40,28 +40,13 @@ def build_permissions_keyboard(
 
     keyboard = []
 
-    permission_names = {
-        models.Permission.BAN_USERS: BUTTONS[lang].get(
-            "permission_ban_users", "Ban/Unban Users"
-        ),
-        models.Permission.BROADCAST: BUTTONS[lang].get(
-            "permission_broadcast", "Broadcast Messages"
-        ),
-        models.Permission.MANAGE_FORCE_JOIN: BUTTONS[lang].get(
-            "permission_manage_force_join", "Manage Force Join"
-        ),
-        models.Permission.VIEW_IDS: BUTTONS[lang].get(
-            "permission_view_ids", "View IDs"
-        ),
-    }
-
     for permission in models.Permission:
-        permission_name = permission_names.get(permission, permission.value)
+        permission_name = BUTTONS[lang].get(
+            f"permission_{permission.value}", permission.value
+        )
         is_selected = permission in selected_permissions
-
         button_text = f"{'🟢' if is_selected else '🔴'} {permission_name}"
         callback_data = f"toggle_permission_{permission.value}"
-
         keyboard.append(
             [InlineKeyboardButton(text=button_text, callback_data=callback_data)]
         )

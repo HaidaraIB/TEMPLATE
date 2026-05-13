@@ -42,6 +42,7 @@ def is_user_member(func):
     @functools.wraps(func)
     async def wrapper(update, context, *args, **kwargs):
         from common.force_join import check_if_user_member
+
         is_user_member = await check_if_user_member(update=update, context=context)
         if not is_user_member:
             return

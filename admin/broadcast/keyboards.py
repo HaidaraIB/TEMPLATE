@@ -36,5 +36,3 @@ def build_broadcast_keyboard(lang: models.Language = models.Language.ARABIC):
         build_back_to_home_page_button(lang=lang, is_admin=True)[0],
     ]
     return InlineKeyboardMarkup(keyboard)
-
-
