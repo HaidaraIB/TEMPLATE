@@ -163,8 +163,8 @@ async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 broadcast_message_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
-            broadcast_message,
-            "^broadcast$",
+            callback=broadcast_message,
+            pattern=r"^broadcast$",
         )
     ],
     states={

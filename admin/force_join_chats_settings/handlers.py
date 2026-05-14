@@ -42,8 +42,8 @@ async def force_join_chats_settings(update: Update, context: ContextTypes.DEFAUL
 
 
 force_join_chats_settings_handler = CallbackQueryHandler(
-    force_join_chats_settings,
-    "^force_join_chats_settings$|^back_to_force_join_chats_settings$",
+    callback=force_join_chats_settings,
+    pattern=r"^force_join_chats_settings$|^back_to_force_join_chats_settings$",
 )
 
 CHAT_ID, CHAT_LINK = range(2)
@@ -249,7 +249,7 @@ add_force_join_chat_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
             callback=add_force_join_chat,
-            pattern="^add_force_join_chat$",
+            pattern=r"^add_force_join_chat$",
         ),
     ],
     states={
@@ -338,14 +338,14 @@ remove_force_join_chat_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
             callback=remove_force_join_chat,
-            pattern="^remove_force_join_chat$",
+            pattern=r"^remove_force_join_chat$",
         ),
     ],
     states={
         CHOOSE_CHAT_TO_REMOVE: [
             CallbackQueryHandler(
-                remove_force_join_chat,
-                "^\d+$",
+                callback=remove_force_join_chat,
+                pattern=r"^\d+$",
             ),
         ]
     },
@@ -388,5 +388,5 @@ async def show_force_join_chats(update: Update, context: ContextTypes.DEFAULT_TY
 
 show_force_join_chats_handler = CallbackQueryHandler(
     callback=show_force_join_chats,
-    pattern="^show_force_join_chats$",
+    pattern=r"^show_force_join_chats$",
 )

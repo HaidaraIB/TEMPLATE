@@ -25,8 +25,8 @@ async def user_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 user_settings_handler = CallbackQueryHandler(
-    user_settings,
-    "^user_settings$|^back_to_user_settings$",
+    callback=user_settings,
+    pattern=r"^user_settings$|^back_to_user_settings$",
 )
 
 
@@ -60,6 +60,6 @@ async def change_lang(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 change_lang_handler = CallbackQueryHandler(
-    change_lang,
-    lambda x: x in [l.name for l in models.Language] + ["change_lang"],
+    callback=change_lang,
+    pattern=lambda x: x in [l.name for l in models.Language] + ["change_lang"],
 )

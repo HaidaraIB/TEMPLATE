@@ -141,8 +141,8 @@ async def confirm_ban_unban(update: Update, context: ContextTypes.DEFAULT_TYPE):
 ban_unban_user_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
-            ban_unban,
-            "^ban_unban$",
+            callback=ban_unban,
+            pattern=r"^ban_unban$",
         ),
     ],
     states={
@@ -154,8 +154,8 @@ ban_unban_user_handler = ConversationHandler(
         ],
         CONFIRM: [
             CallbackQueryHandler(
-                confirm_ban_unban,
-                "^confirm_ban_unban$",
+                callback=confirm_ban_unban,
+                pattern=r"^confirm_ban_unban$",
             ),
         ],
     },

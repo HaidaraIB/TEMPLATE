@@ -47,7 +47,7 @@ async def admin_settings(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 admin_settings_handler = CallbackQueryHandler(
     admin_settings,
-    "^admin_settings$|^back_to_admin_settings$",
+    r"^admin_settings$|^back_to_admin_settings$",
 )
 
 
@@ -225,7 +225,7 @@ add_admin_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
             callback=add_admin,
-            pattern="^add_admin$",
+            pattern=r"^add_admin$",
         ),
     ],
     states={
@@ -238,11 +238,11 @@ add_admin_handler = ConversationHandler(
         SELECT_PERMISSIONS: [
             CallbackQueryHandler(
                 callback=toggle_permission,
-                pattern=r"^toggle_permission_[^_]+$",
+                pattern=r"^toggle_permission_",
             ),
             CallbackQueryHandler(
                 callback=skip_or_save_permissions,
-                pattern="^((skip)|(save))_permissions$",
+                pattern=r"^((skip)|(save))_permissions$",
             ),
         ],
     },
@@ -318,8 +318,8 @@ remove_admin_handler = ConversationHandler(
     states={
         CHOOSE_ADMIN_ID_TO_REMOVE: [
             CallbackQueryHandler(
-                remove_admin,
-                "^\d+$",
+                callback=remove_admin,
+                pattern=r"^\d+$",
             ),
         ]
     },
@@ -348,7 +348,7 @@ async def show_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 show_admins_handler = CallbackQueryHandler(
     callback=show_admins,
-    pattern="^show_admins$",
+    pattern=r"^show_admins$",
 )
 
 
@@ -514,7 +514,7 @@ edit_admin_permissions_handler = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
             callback=edit_admin_permissions,
-            pattern="^edit_admin_permissions$",
+            pattern=r"^edit_admin_permissions$",
         ),
     ],
     states={
@@ -537,7 +537,7 @@ edit_admin_permissions_handler = ConversationHandler(
         back_to_admin_home_page_handler,
         CallbackQueryHandler(
             callback=back_to_choose_admin_permissions,
-            pattern="^back_to_choose_admin_permissions$",
+            pattern=r"^back_to_choose_admin_permissions$",
         ),
     ],
 )

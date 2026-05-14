@@ -29,8 +29,8 @@ async def manage_users_settings(update: Update, context: ContextTypes.DEFAULT_TY
 
 
 manage_users_settings_handler = CallbackQueryHandler(
-    manage_users_settings,
-    "^manage_users_settings$|^back_to_manage_users_settings$",
+    callback=manage_users_settings,
+    pattern=r"^manage_users_settings$|^back_to_manage_users_settings$",
 )
 
 
@@ -160,6 +160,6 @@ async def export_users_to_excel(update: Update, context: ContextTypes.DEFAULT_TY
 
 
 export_users_handler = CallbackQueryHandler(
-    export_users_to_excel,
-    "^export_users_to_excel$",
+    callback=export_users_to_excel,
+    pattern=r"^export_users_to_excel$",
 )
