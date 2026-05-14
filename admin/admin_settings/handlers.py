@@ -57,7 +57,6 @@ NEW_ADMIN_ID, SELECT_PERMISSIONS = range(2)
 async def add_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if PrivateChatAndOwner().filter(update):
         lang = get_lang(update.effective_user.id)
-        await update.callback_query.answer()
         await update.callback_query.delete_message()
         await context.bot.send_message(
             chat_id=update.effective_user.id,
@@ -284,7 +283,6 @@ async def remove_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     show_alert=True,
                 )
 
-            await update.callback_query.answer()
             admins = s.query(models.User).filter(models.User.is_admin == True).all()
             admin_ids_keyboard = [
                 [
